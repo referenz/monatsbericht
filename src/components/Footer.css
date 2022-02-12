@@ -1,0 +1,30 @@
+#footer {
+    border-top: 1px solid black;
+    background-color: #eee;
+  }
+  
+  #footer * {
+    font-size: 80%;
+  }
+  
+  #footer h1 {
+    text-align: start;
+    display: inline;
+  }
+  
+ #footer span::before {
+    content: " | "
+  }
+  
+  #footer a {
+    text-decoration: none;
+    color: inherit;
+    font: inherit;
+  }
+  
+  #footer a.github::before {
+    content: ' ';
+    background: url('GitHub-Mark-32px.png') left center no-repeat;
+    background-size: 85% auto;
+    padding-left: 3ex;
+  }

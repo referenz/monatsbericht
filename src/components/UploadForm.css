@@ -1,0 +1,81 @@
+/*
+.dropform {
+    opacity: 1;
+    transition: opacity .7s ease-in .1s;
+}
+
+.dropform.noshow {
+    opacity: 0;
+} 
+
+/* Dieser Umweg ist nötig, weil `display: none` nicht gut mit der Transition zusammenspielt */
+/*
+.dropform.noshow-invisible {
+    visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 0;
+    width: 0;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.dropform.noshow-hidden {
+    display: none;
+}
+*/
+
+.dropzone {
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    outline: #aaa dashed thick;
+    outline-offset: -8px;
+    border-radius: 1rem;
+    padding: 12px;
+
+    background-color: #FFFACD;
+    background-image: url(upload.svg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 50%;
+
+    font-weight: bold;
+    color: #000532;
+
+    overflow-wrap: anywhere;
+}
+
+@media (orientation: landscape) {
+    .dropzone {
+        width: 66vh;
+        height: 66vh;
+
+        font-size: 2.75vw;
+    }
+}
+  
+@media (orientation: portrait) {
+    .dropzone {
+        width: 66vw;
+        height: 66vw;
+
+        font-size: 2.75vh;
+    }
+}
+
+.dropzone:hover, .dropzone.dragover {
+    background-color: #ddd;
+}
+
+.dropzone.dragover {
+    outline-color: #FAFAD2;
+}
+
+.dropzone input[type=file] {
+    display: none;
+}

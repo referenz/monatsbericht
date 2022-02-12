@@ -1,0 +1,58 @@
+.vergleich table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.vergleich caption {
+    font-weight: bold;
+    color: black;
+}
+
+.vergleich thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+.vergleich thead tr {
+    position: sticky;
+    top: 0;
+}
+
+.vergleich th,
+.vergleich td {
+    font-size: 0.85em;
+    padding: 12px 15px;
+}
+
+.vergleich tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.vergleich tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.vergleich tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+.vergleich tbody tr:hover {
+    background-color: #FAFAD2;
+}
+
+.vergleich .zuwendung {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.vergleich td.changed span.wert-alt{
+    text-decoration: line-through;
+    color: red;
+}
+
+.vergleich td.changed span.wert-neu{
+    background-color: yellow;
+}
