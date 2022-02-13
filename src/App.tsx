@@ -27,7 +27,6 @@ function App() {
         }
         if (globalState === 'ONE_FILE') {
             monatsbericht.current = Monatsbericht.fromArrayBuffer(datei_neu.current.name, datei_neu.current.buffer);
-            console.log(monatsbericht.current.get_projekte());
 
             form_neu.current.classList.add('noshow');
             form_alt.current.classList.add('noshow');
@@ -43,7 +42,6 @@ function App() {
             // mit einer Map-Struktur arbeitet. Sollte das anders implementiert werden, kann
             // die Umbenennung entfallen. Kann vielleicht in die Klasse verlagert werden?
             if (datei_alt.current.name === datei_neu.current.name) datei_alt.current.name += '_1';
-            const monatsbericht_alt = Monatsbericht.fromArrayBuffer(datei_alt.current.name, datei_alt.current.buffer);
 
             form_alt.current.classList.add('noshow');
             form_alt.current.addEventListener('transitionend', () => {

@@ -31,10 +31,13 @@ const Comparison = forwardRef<HTMLHeadingElement, ComparisonProps>((props, ref) 
             )
         );
 
-        /*
-        const abweichung_projektzahl = Array.from(props.monatsbericht.current.abweichung_projektzahl(monatsbericht_alt));
+        const abweichung_projektzahl = Array.from(
+            props.monatsbericht.current.abweichung_projektzahl(monatsbericht_alt.current, { ordered: true }) as [
+                Map<string, string[]>,
+                Map<string, string[]>
+            ]
+        );
         console.log(abweichung_projektzahl);
-        */
     }, [monatsbericht_alt, props.monatsbericht]);
 
     return (
@@ -48,10 +51,8 @@ const Comparison = forwardRef<HTMLHeadingElement, ComparisonProps>((props, ref) 
                 />
             )}
 
-            {/*
             <h2>Hinzugekommene oder entfernte Projekte*</h2>
             <p>* Die Angaben zum Bewilligungszeitraum werden derzeit noch nicht ausgewertet</p>
-            */}
         </Container>
     );
 });

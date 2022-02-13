@@ -6,7 +6,11 @@ function formatCurrency(num: number): string {
     return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' Euro';
 }
 
-function VergleichsTabellen(props: { daten: any; monatsbericht: Monatsbericht; monatsbericht_alt: Monatsbericht }) {
+function VergleichsTabellen(props: {
+    daten: [string, Map<string, string[]>][];
+    monatsbericht: Monatsbericht;
+    monatsbericht_alt: Monatsbericht;
+}) {
     const infofelder = {
         Kommune: ['Trägername', 'Fördergebiet'],
         Land: ['Trägername', 'Bundesland'],
@@ -64,7 +68,9 @@ function VergleichsTabellen(props: { daten: any; monatsbericht: Monatsbericht; m
             </tbody>
         </table>
     ));
-    return tabellen;
+
+    // Curcly Braces im Return-Statement wegen https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20356
+    return <>{tabellen}</>;
 }
 
 export default VergleichsTabellen;

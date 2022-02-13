@@ -3,9 +3,6 @@ import XLSX from 'xlsx';
 type Projektliste = Map<string, Record<string, string | number>>;
 
 class Monatsbericht {
-    projekte: Projektliste;
-    handlungsbereiche: string[];
-    zuordnungen: Map<string, string>;
     static vergleichsfelder = ['Zuwendung 2020', 'Zuwendung 2021', 'Zuwendung 2022', 'Zuwendung 2023'];
 
     static handlungsbereiche = [
@@ -22,13 +19,11 @@ class Monatsbericht {
         'Begleitprojekte',
     ];
 
-    private constructor(args: { datei: string } | { buffer: [string, ArrayBuffer] }) {
-        // TODO: Hier muss ein Weg gefunden werden, nur Zuwendungsjahre auszuwerten, für die auch in beiden Dateien
-        // Werte vorliegen. Alternative hierzu: Die Vergleichsfunktion schmeißt Werte mit Zuwendungssumme 0 raus.
-        // Weitere Alternative: Wir machen es uns zunutze, dass viele Felder aus zukünftigen Jahren undefined
-        // sein dürften.
-        //this.vergleichsfelder = ['Zuwendung 2021', 'Zuwendung 2022'];
+    projekte: Projektliste;
+    handlungsbereiche: string[];
+    zuordnungen: Map<string, string>;
 
+    private constructor(args: { datei: string } | { buffer: [string, ArrayBuffer] }) {
         this.projekte =
             'buffer' in args
                 ? this.get_projekte_aus_datei({ dateiname: args.buffer[0], buffer: args.buffer[1] })
@@ -44,7 +39,7 @@ class Monatsbericht {
     }
 
     /**
-     * Diese Funktion weist den Handlungsbereichen jeweils ein passendes Tabellenblatt zu. Das Ergebnis geht in die
+     * Weist den Handlungsbereichen jeweils ein passendes Tabellenblatt zu. Das Ergebnis geht in die
      * Klassenvariable `zuordnungen`. Die interne Variable `blattnamen` enthält für jeden Handlungsbereich eine Liste
      * möglicher passender Tabellenblattnamen.
      * @param workbook - Die von XLSX bereits eingelesene Excel-Datei
@@ -141,9 +136,9 @@ class Monatsbericht {
     /**
      * Ordnet eine übergebene Projektliste nach Handlungsbereichen
      * @param projektliste
-     * @returns Ein Map mit den Handlungsbereichen als Keys und den Projekten als Values
+     * @returns Map mit den Handlungsbereichen als Schlüssel und einem Array mit Projekten als jeweiligem Value
      */
-    private ordne_nach_handlungsbereichen(projektliste: Map<string, string[]>): Map<string, Map<string, unknown>> {
+    private ordne_nach_handlungsbereichen(projektliste: Map<string, string[]>): Map<string, Map<string, string[]>> {
         const ordered: Map<string, Map<string, string[]>> = new Map();
         Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => ordered.set(handlungsbereich, new Map()));
 
@@ -174,18 +169,54 @@ class Monatsbericht {
         });
 
         return options?.ordered === true
-            ? (this.ordne_nach_handlungsbereichen(projekte_abweichende) as Map<string, Map<string, string[]>>)
+            ? this.ordne_nach_handlungsbereichen(projekte_abweichende)
             : projekte_abweichende;
     }
 
-    public abweichung_projektzahl(alt: Monatsbericht): [string[], string[]] {
+    /**
+     * Hilfsfunktion für die öffentliche Funktion `abweichung_projektzahl()`, die die gefundenen Projekt nach
+     * Handlungsbereichen sortiert.
+     * @param projekte Array mit den Projektnummern
+     * @param alt Optional: Object der Klasse `Monatsbericht` mit dem alten Monatsbericht
+     * @returns Map mit den Handlungsberichen als Schlüssel
+     */
+    private orderListe(projekte: string[], alt?: Monatsbericht) {
+        const ordered: Map<string, string[]> = new Map();
+        Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => ordered.set(handlungsbereich, []));
+
+        projekte.forEach((projekt) => {
+            const handlungsbereich_aktuell =
+                alt === undefined
+                    ? (this.get_projekt(projekt, 'Handlungsbereich') as string)
+                    : (alt.get_projekt(projekt, 'Handlungsbereich') as string);
+
+            const liste = ordered.get(handlungsbereich_aktuell);
+            liste.push(projekt);
+            ordered.delete(handlungsbereich_aktuell);
+            ordered.set(handlungsbereich_aktuell, liste);
+        });
+
+        const values = Array.from(ordered.entries());
+        values.forEach((value) => {
+            if (value[1].length === 0) ordered.delete(value[0]);
+        });
+
+        return ordered;
+    }
+
+    public abweichung_projektzahl(
+        alt: Monatsbericht,
+        options?: { ordered?: boolean }
+    ): [string[], string[]] | [Map<string, string[]>, Map<string, string[]>] {
         const projektliste_aktuell = Array.from(this.projekte.keys());
         const projektliste_alt = Array.from(alt.get_projekte().keys());
 
         const neue_projekte = projektliste_aktuell.filter((projekt) => !projektliste_alt.includes(projekt));
         const alte_projekte = projektliste_alt.filter((projekt) => !projektliste_aktuell.includes(projekt));
 
-        return [neue_projekte, alte_projekte];
+        return options?.ordered === true
+            ? [this.orderListe(neue_projekte), this.orderListe(alte_projekte, alt)]
+            : [neue_projekte, alte_projekte];
     }
 }
 
