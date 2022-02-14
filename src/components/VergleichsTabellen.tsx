@@ -25,10 +25,7 @@ function VergleichsTabellen(props: {
         Forschungsvorhaben: ['Trägername', 'Projekttitel'],
     };
 
-    // Handlungsbereiche ohne Veränderungen ausfiltern
-    const ohne_leere = props.daten.filter((el) => el[1].size > 0);
-
-    const tabellen = ohne_leere.map((handlungsbereich) => (
+    const tabellen = props.daten.map((handlungsbereich) => (
         <table key={handlungsbereich[0]}>
             <caption style={{ captionSide: 'top' }}>{handlungsbereich[0]}</caption>
             <thead>

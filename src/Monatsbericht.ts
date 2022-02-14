@@ -148,6 +148,11 @@ class Monatsbericht {
             });
         });
 
+        const values = Array.from(ordered.entries());
+        values.forEach((value) => {
+            if (value[1].size === 0) ordered.delete(value[0]);
+        });
+
         return ordered;
     }
 
