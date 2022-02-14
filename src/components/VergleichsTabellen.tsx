@@ -33,7 +33,7 @@ function VergleichsTabellen(props: {
             <caption style={{ captionSide: 'top' }}>{handlungsbereich[0]}</caption>
             <thead>
                 <tr>
-                    <th>Projektnr</th>
+                    <th>Projektnr.</th>
                     {handlungsbereich[0] in infofelder &&
                         infofelder[handlungsbereich[0]].map((feld) => <th key={feld}>{feld}</th>)}
                     {Monatsbericht.vergleichsfelder.map((feld) => (
@@ -53,13 +53,24 @@ function VergleichsTabellen(props: {
                             const changed = e[1].includes(feld) ? 'changed' : '';
                             return (
                                 <td key={feld} className={changed + ' zuwendung'}>
-                                    <span className="wert-alt">
-                                        {formatCurrency(props.monatsbericht_alt.get_projekt(e[0], feld) as number)}
-                                    </span>
-                                    <br />
-                                    <span className="wert-neu">
-                                        {formatCurrency(props.monatsbericht.get_projekt(e[0], feld) as number)}
-                                    </span>
+                                    {changed && props.monatsbericht_alt.get_projekt(e[0], feld) !== undefined && (
+                                        <>
+                                            <span className="wert-alt">
+                                                {formatCurrency(
+                                                    props.monatsbericht_alt.get_projekt(e[0], feld) as number
+                                                )}
+                                            </span>
+                                            <br />
+                                        </>
+                                    )}
+                                    {changed && props.monatsbericht.get_projekt(e[0], feld) !== undefined && (
+                                        <span className="wert-neu">
+                                            {formatCurrency(props.monatsbericht.get_projekt(e[0], feld) as number)}
+                                        </span>
+                                    )}
+                                    {!changed && props.monatsbericht.get_projekt(e[0], feld) !== undefined && (
+                                        <>{formatCurrency(props.monatsbericht.get_projekt(e[0], feld) as number)}</>
+                                    )}
                                 </td>
                             );
                         })}
@@ -69,7 +80,7 @@ function VergleichsTabellen(props: {
         </table>
     ));
 
-    // Curcly Braces im Return-Statement wegen https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20356
+    // React Fragment <></> im Return-Statement wegen https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20356
     return <>{tabellen}</>;
 }
 

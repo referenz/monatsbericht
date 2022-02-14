@@ -51,8 +51,10 @@ const Comparison = forwardRef<HTMLHeadingElement, ComparisonProps>((props, ref) 
                 />
             )}
 
+            {/*
             <h2>Hinzugekommene oder entfernte Projekte*</h2>
-            <p>* Die Angaben zum Bewilligungszeitraum werden derzeit noch nicht ausgewertet</p>
+            <p className="text-muted">* Die Angaben zum Bewilligungszeitraum werden derzeit noch nicht ausgewertet</p>
+            */}
         </Container>
     );
 });
