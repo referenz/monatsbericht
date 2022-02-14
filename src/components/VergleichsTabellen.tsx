@@ -19,7 +19,7 @@ function VergleichsTabellen(props: {
         'Modellprojekte Vielfaltgestaltung': ['Trägername', 'Projekttitel'],
         'Modellprojekte Extremismusprävention': ['Trägername', 'Projekttitel'],
         'Modellprojekte Strafvollzug': ['Trägername', 'Projekttitel'],
-        'Wissenschaftliche Belgeitung': ['Trägername', 'Projekttitel'],
+        'Wissenschaftliche Begleitung': ['Trägername', 'Projekttitel'],
         Innovationsfonds: ['Trägername', 'Projekttitel'],
         Begleitprojekte: ['Trägername', 'Projekttitel'],
         Forschungsvorhaben: ['Trägername', 'Projekttitel'],
