@@ -1,2 +1,2 @@
 # monatslisten-auswertung
-Automatische Auswertung der Schleifer Monatslisten
+Automatische Auswertung der Schleifer Monatsberichte
