@@ -4,6 +4,7 @@
         "allowSyntheticDefaultImports": true,
         "moduleResolution": "node",
         "jsx": "react-jsx",
+        "resolveJsonModule": true
     },
     
 }
