@@ -47,7 +47,7 @@ function App() {
             form_alt.current.addEventListener('transitionend', () => {
                 form_alt.current.classList.add('noshow-hidden');
                 form_neu.current.classList.add('noshow-hidden');
-                vergleich.current.classList.remove('noshow');
+                vergleich.current.classList.remove('noshow', 'noshow-invisible');
             });
         }
     }, [globalState]);
@@ -77,7 +77,7 @@ function App() {
                 {monatsbericht.current && datei_alt && (
                     <Comparison
                         ref={vergleich}
-                        className="vergleich showtoggle noshow"
+                        className="vergleich showtoggle noshow noshow-invisible"
                         monatsbericht={monatsbericht}
                         datei_alt={datei_alt}
                     />
