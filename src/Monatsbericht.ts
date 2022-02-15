@@ -1,6 +1,6 @@
 import XLSX from 'xlsx';
 
-type Projektliste = Map<string, Record<string, string | number>>;
+type Projektliste = Map<string, Record<string, string | number | string[]>>;
 
 class Monatsbericht {
     static vergleichsfelder = ['Zuwendung 2020', 'Zuwendung 2021', 'Zuwendung 2022', 'Zuwendung 2023'];
@@ -79,25 +79,39 @@ class Monatsbericht {
     }
 
     private get_projekte_aus_blatt(blattname: string, workbook: XLSX.WorkBook): Projektliste {
-        const json_liste: Record<string, string | number>[] = XLSX.utils.sheet_to_json(workbook.Sheets[blattname]);
+        const json_liste: Record<string, string | number | string[]>[] = XLSX.utils.sheet_to_json(
+            workbook.Sheets[blattname]
+        );
         const projekte: Projektliste = new Map();
 
         for (const zeile in json_liste)
             if ('Nr' in json_liste[zeile]) {
                 delete json_liste[zeile]['Nr'];
+                projekte.set((json_liste[zeile]['Projektnr.'] as string).replace(/\s/, '').trim(), json_liste[zeile]);
                 json_liste[zeile]['Handlungsbereich'] = this.zuordnungen.get(blattname);
 
-                // Einfachere Spaltenbezeichnungen
+                // Eingelesene Daten aufräumen
+                json_liste[zeile]['Projektnr.'] = (json_liste[zeile]['Projektnr.'] as string).replace(/\s/, '').trim();
                 json_liste[zeile]['Fördergebiet'] = json_liste[zeile]['Fördergebiet '];
                 delete json_liste[zeile]['Fördergebiet '];
 
-                const spalte_projekttitel = Array.from(Object.keys(json_liste[zeile])).find((el) =>
+                let gesuchte_spalte = Array.from(Object.keys(json_liste[zeile])).find((el) =>
                     el.startsWith('Projektbezeichnung')
                 );
-                json_liste[zeile]['Projekttitel'] = json_liste[zeile][spalte_projekttitel];
-                delete json_liste[zeile][spalte_projekttitel];
+                json_liste[zeile]['Projekttitel'] = json_liste[zeile][gesuchte_spalte];
+                delete json_liste[zeile][gesuchte_spalte];
 
-                projekte.set((json_liste[zeile]['Projektnr.'] as string).replace(/ /, '').trim(), json_liste[zeile]);
+                gesuchte_spalte = Array.from(Object.keys(json_liste[zeile])).find((el) => el.startsWith('Projektlauf'));
+                let zeit = (json_liste[zeile][gesuchte_spalte] as string)?.match(/(\d\d\.\d\d\.\d\d\d\d)/gm);
+                json_liste[zeile]['Projektlaufzeit'] = zeit;
+                delete json_liste[zeile][gesuchte_spalte];
+
+                gesuchte_spalte = Array.from(Object.keys(json_liste[zeile])).find((el) =>
+                    el.startsWith('Bewilligungs')
+                );
+                zeit = (json_liste[zeile][gesuchte_spalte] as string)?.match(/(\d\d\.\d\d\.\d\d\d\d)/gm);
+                json_liste[zeile]['Bewilligungszeit'] = zeit;
+                delete json_liste[zeile][gesuchte_spalte];
             }
 
         if (projekte.size === 0) console.log(`Keine Projekte in Tabellenblatt ${blattname} gefunden.`);
