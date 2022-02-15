@@ -2,7 +2,7 @@ import { ReactChild } from 'react';
 import Infofelder from '../infofelder.json';
 import Monatsbericht from '../Monatsbericht';
 
-function Listing(props: { projekte: any; monatsbericht: Monatsbericht; children: ReactChild }) {
+function Listing(props: { projekte: [string, string[]][]; monatsbericht: Monatsbericht; children: ReactChild }) {
     const zuordnungen: Map<string, string[]> = new Map();
     const infofelder = new Map(Object.entries(Infofelder));
     Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => {
@@ -12,7 +12,7 @@ function Listing(props: { projekte: any; monatsbericht: Monatsbericht; children:
         ]);
     });
 
-    const Tabellen = props.projekte.map((handlungsbereich: [string, string[]]) => {
+    const Tabellen = props.projekte.map((handlungsbereich) => {
         const columns: string[] = zuordnungen.get(handlungsbereich[0]);
         const rows = [];
 
