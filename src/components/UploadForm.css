@@ -24,19 +24,25 @@
 
 @media (orientation: landscape) {
     .dropzone {
-        width: 66vh;
-        height: 66vh;
+        width: 66vh; /* für die Abwärtskompatibilität */
+        width: clamp(300px, 66vh, 600px);
+        height: 66vh; /* für die Abwärtskompatibilität */
+        height: clamp(300px, 66vh, 600px);
 
-        font-size: 2.75vw;
+        font-size: 2.75vh; /* für die Abwärtskompatibilität */
+        font-size: min(2.75vw, 40px);
     }
 }
   
 @media (orientation: portrait) {
     .dropzone {
-        width: 66vw;
-        height: 66vw;
+        width: 66vw; /* für die Abwärtskompatibilität */
+        width: clamp(350px, 66vw, 700px);
+        height: 66vw; /* für die Abwärtskompatibilität */
+        height: clamp(350px, 66vw, 700px);
 
-        font-size: 2.75vh;
+        font-size: 2.75vh; /* für die Abwärtskompatibilität */
+        font-size: min(2.75vh, 40px);
     }
 }
 
