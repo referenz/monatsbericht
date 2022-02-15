@@ -12,7 +12,7 @@ function Listing(props: { projekte: any; monatsbericht: Monatsbericht; children:
         ]);
     });
 
-    const Tabellen = props.projekte.map((handlungsbereich) => {
+    const Tabellen = props.projekte.map((handlungsbereich: [string, string[]]) => {
         const columns: string[] = zuordnungen.get(handlungsbereich[0]);
         const rows = [];
 
@@ -29,7 +29,7 @@ function Listing(props: { projekte: any; monatsbericht: Monatsbericht; children:
         });
 
         return (
-            <table key={handlungsbereich[0]}>
+            <table key={handlungsbereich[0]} className="projektliste">
                 <caption style={{ captionSide: 'top' }}>{handlungsbereich[0]}</caption>
                 <thead>
                     <tr>

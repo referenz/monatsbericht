@@ -46,6 +46,11 @@
 .vergleich .zuwendung {
     text-align: right;
     white-space: nowrap;
+    transition: all .7s ease-in-out;
+}
+
+.vergleich .zuwendung:hover {
+    transform: scale(1.15);
 }
 
 .vergleich td.changed span.wert-alt{
