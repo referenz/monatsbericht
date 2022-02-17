@@ -1,19 +1,17 @@
-import React, { forwardRef, MutableRefObject, SyntheticEvent, DragEvent } from 'react';
+import { SyntheticEvent, DragEvent } from 'react';
 import { Form } from 'react-bootstrap';
 import './UploadForm.css';
 import GlobalState from '../types/GlobalState';
 import FileBufferObj from '../types/FileBufferObj';
 
-interface UploadFormProps extends React.ComponentPropsWithoutRef<'form'> {
+function UploadForm(props: {
     globalState: GlobalState;
-    setGlobalState: (state: GlobalState) => void;
-    className: string;
+    datei_neu?: React.MutableRefObject<FileBufferObj>;
+    setGlobalState: React.Dispatch<React.SetStateAction<GlobalState>>;
+    datei_alt?: React.MutableRefObject<FileBufferObj>;
     file: string;
-    datei_neu?: MutableRefObject<FileBufferObj>;
-    datei_alt?: MutableRefObject<FileBufferObj>;
-}
-
-const UploadForm = forwardRef<HTMLFormElement, UploadFormProps>((props: UploadFormProps, ref) => {
+    className: string;
+}) {
     function dragover(e: SyntheticEvent) {
         e.preventDefault();
         (e.target as HTMLLabelElement).classList.add('dragover');
@@ -44,7 +42,7 @@ const UploadForm = forwardRef<HTMLFormElement, UploadFormProps>((props: UploadFo
             };
             props.setGlobalState('ONE_FILE');
         }
-        if (props.globalState === 'ONE_FILE') {
+        if (props.globalState === 'WAIT_FOR_SECOND') {
             props.datei_alt.current = {
                 name: file.name,
                 buffer: await file.arrayBuffer(),
@@ -54,7 +52,7 @@ const UploadForm = forwardRef<HTMLFormElement, UploadFormProps>((props: UploadFo
     }
 
     return (
-        <Form className="dropform showtoggle noshow-invisible" ref={ref}>
+        <Form className="dropform">
             <Form.Group controlId={props.file} className={props.className}>
                 <Form.Label
                     className="dropzone"
@@ -77,6 +75,6 @@ const UploadForm = forwardRef<HTMLFormElement, UploadFormProps>((props: UploadFo
             </Form.Group>
         </Form>
     );
-});
+}
 
 export default UploadForm;

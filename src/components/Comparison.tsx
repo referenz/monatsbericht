@@ -1,4 +1,4 @@
-import React, { forwardRef, MutableRefObject, useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import './Comparison.css';
 import VergleichsTabellen from './VergleichsTabellen';
@@ -6,13 +6,11 @@ import Listing from './Listing';
 import Monatsbericht from '../Monatsbericht';
 import FileBufferObj from '../types/FileBufferObj';
 
-interface ComparisonProps extends React.ComponentPropsWithoutRef<'h2'> {
-    className: string;
-    monatsbericht: MutableRefObject<Monatsbericht>;
-    datei_alt: MutableRefObject<FileBufferObj>;
-}
-
-const Comparison = forwardRef<HTMLHeadingElement, ComparisonProps>((props, ref) => {
+function Comparison(props: {
+    datei_alt: React.MutableRefObject<FileBufferObj>;
+    monatsbericht: React.MutableRefObject<Monatsbericht>;
+    className?: string;
+}) {
     const monatsbericht_alt = useRef<Monatsbericht>(null);
     const [abweichung_foerder, setAbweichung_foerder] = useState<[string, Map<string, string[]>][]>(null);
     const [abweichung_projektzahl, setAbweichung_projektzahl] = useState(null);
@@ -38,7 +36,7 @@ const Comparison = forwardRef<HTMLHeadingElement, ComparisonProps>((props, ref) 
         );
     }, [monatsbericht_alt, props.monatsbericht]);
     return (
-        <Container className={props.className} ref={ref}>
+        <Container className={props.className + ' vergleich'}>
             <h2>Abweichende Fördersummen</h2>
             {abweichung_foerder && abweichung_foerder.length > 0 && (
                 <VergleichsTabellen
@@ -79,6 +77,6 @@ const Comparison = forwardRef<HTMLHeadingElement, ComparisonProps>((props, ref) 
             )}
         </Container>
     );
-});
+}
 
 export default Comparison;

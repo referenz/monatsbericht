@@ -1,0 +1,19 @@
+.prompt {
+    text-align: center;
+    font-size: 133%
+}
+
+
+.prompt .buttonrow {
+    display: flex;
+    justify-content: center;
+}
+
+.prompt button {
+    margin-left: 3vw;
+    margin-right: 3vw;
+    
+    flex: 1 1 0px;
+
+    font-weight: bold;
+}
