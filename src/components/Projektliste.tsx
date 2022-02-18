@@ -154,6 +154,7 @@ function Projektliste(props: {
         const observer = new IntersectionObserver(
             ([e]) => e.target.classList.toggle('is-pinned', e.intersectionRatio < 1),
             {
+                rootMargin: '0px 0px 200px 0px',
                 threshold: [1],
             }
         );
