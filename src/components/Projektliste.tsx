@@ -47,7 +47,8 @@ function Projektliste(props: {
             setProjektliste(Array.from(props.monatsbericht.get_projekte({ ordered: true }) as Map<string, string[]>));
         // Fall 2: Ausgabe der Projekte mit abweichenden Fördersummen, geordnet nach Handlungsbereichen
         else if (props.abweichende_daten) {
-            // Schritt 1: Überführung in das Projektlisten-Format [Handlungsbereich[Projektnummer]]
+            // Überführung in das Projektlisten-Format [Handlungsbereich[Projektnummer]] + paralleles Verzeichnis
+            // mit abweichenden Feldern für jedes Projekt
             const projekte = [];
             const abweichende = [];
             props.abweichende_daten.forEach((handlungsbereich) => {
