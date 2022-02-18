@@ -4,7 +4,7 @@ import Projektliste from './Projektliste';
 import Monatsbericht from '../Monatsbericht';
 import FileBufferObj from '../types/FileBufferObj';
 
-function Comparison(props: {
+function Vergleich(props: {
     datei_alt: React.MutableRefObject<FileBufferObj>;
     monatsbericht: React.MutableRefObject<Monatsbericht>;
     className?: string;
@@ -40,6 +40,7 @@ function Comparison(props: {
                     abweichende_daten={abweichung_foerder}
                     monatsbericht={props.monatsbericht.current}
                     monatsbericht_alt={monatsbericht_alt.current}
+                    tabellen_headline_h2={true}
                 >
                     Abweichende Fördersummen
                 </Projektliste>
@@ -78,4 +79,4 @@ function Comparison(props: {
     );
 }
 
-export default Comparison;
+export default Vergleich;

@@ -6,7 +6,9 @@ function Analyse(props: { monatsbericht: Monatsbericht }) {
     return (
         <>
             <h2>Auswertung des aktuellen Monatsberichts</h2>
-            <Projektliste monatsbericht={props.monatsbericht}>Aktueller Monatsbericht</Projektliste>
+            <h3>Statistische Auswertungen oder so</h3>
+            <p>Kommen noch ...</p>
+            <Projektliste monatsbericht={props.monatsbericht}>Projektliste</Projektliste>
         </>
     );
 }

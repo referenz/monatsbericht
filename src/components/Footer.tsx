@@ -1,7 +1,7 @@
 import { Container } from 'react-bootstrap';
 import './Footer.css';
 
-function Footer(props: { globalState }) {
+function Footer() {
     return (
         <Container fluid className="fixed-bottom" id="footer">
             <h1>Monatsberichtsauswertung</h1>
@@ -15,7 +15,6 @@ function Footer(props: { globalState }) {
                     Quellcode
                 </a>
             </span>
-            <span>Status: {props.globalState}</span>
         </Container>
     );
 }

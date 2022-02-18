@@ -16,6 +16,7 @@ function Projektliste(props: {
     projekte?: string[][]; // [Handlungsbereich[Projektnummer]]
     monatsbericht_alt?: Monatsbericht;
     abweichende_daten?: [string, Map<string, string[]>][]; // [Handlungsbereich[Map<projektnummer, abweichende]]
+    tabellen_headline_h2?: boolean;
     children?;
 }) {
     const caption = useRef([]);
@@ -67,7 +68,12 @@ function Projektliste(props: {
     const Tabellen = projektliste.map((handlungsbereich, i) => {
         if (zuordnungen === undefined) return null;
 
-        const columns = zuordnungen.get(handlungsbereich[0]);
+        const columns = !props.abweichende_daten
+            ? zuordnungen.get(handlungsbereich[0])
+            : zuordnungen
+                  .get(handlungsbereich[0])
+                  .filter((feld) => feld !== 'Bewilligungszeit' && feld !== 'Projektlaufzeit');
+        console.log(columns);
 
         const rows = [];
         handlungsbereich[1].forEach((projekt: string) => {
@@ -180,7 +186,8 @@ function Projektliste(props: {
 
     return (
         <>
-            {props.children && <h2>{props.children}</h2>}
+            {props.children && !props.tabellen_headline_h2 && <h3>{props.children}</h3>}
+            {props.children && props.tabellen_headline_h2 && <h2>{props.children}</h2>}
             {observerDone && Tabellen}
         </>
     );

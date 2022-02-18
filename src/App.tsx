@@ -6,7 +6,7 @@ import Footer from './components/Footer';
 import UploadForm from './components/UploadForm';
 import Prompt from './components/Prompt';
 import Analyse from './components/Analyse';
-import Comparison from './components/Comparison';
+import Vergleich from './components/Vergleich';
 import GlobalState from './types/GlobalState';
 import FileBufferObj from './types/FileBufferObj';
 import Monatsbericht from './Monatsbericht';
@@ -26,8 +26,8 @@ function App() {
 
     return (
         <>
-            <Footer globalState={globalState} /> {/* Footer steht oben, weil er h1-Element enthält */}
-            <Fade in={globalState === 'INIT'} unmountOnExit={true} onExited={(_) => setGlobalState('PROMPT')}>
+            <Footer /> {/* Footer steht oben, weil er h1-Element enthält */}
+            <Fade in={globalState === 'INIT'} unmountOnExit={true} onExited={() => setGlobalState('PROMPT')}>
                 <Container>
                     <UploadForm
                         className="mt-4"
@@ -42,7 +42,7 @@ function App() {
                 in={globalState === 'PROMPT'}
                 unmountOnExit={true}
                 mountOnEnter={true}
-                onExited={(_) => {
+                onExited={() => {
                     if (globalState === 'GO_FOR_SECOND') setGlobalState('WAIT_FOR_SECOND');
                     if (globalState === 'GO_FOR_ANALYSIS') setGlobalState('ANALYSIS');
                 }}
@@ -60,7 +60,7 @@ function App() {
                 in={globalState === 'WAIT_FOR_SECOND'}
                 unmountOnExit={true}
                 mountOnEnter={true}
-                onExited={(_) => setGlobalState('COMPARE')}
+                onExited={() => setGlobalState('COMPARE')}
             >
                 <Container>
                     <UploadForm
@@ -74,7 +74,7 @@ function App() {
             </Fade>
             <Fade in={globalState === 'COMPARE'} mountOnEnter={true} unmountOnExit={true}>
                 <Container>
-                    <Comparison monatsbericht={monatsbericht} datei_alt={datei_alt} />
+                    <Vergleich monatsbericht={monatsbericht} datei_alt={datei_alt} />
                 </Container>
             </Fade>
         </>

@@ -12,8 +12,18 @@
 .prompt button {
     margin-left: 3vw;
     margin-right: 3vw;
+    margin-bottom: 2rem;
     
-    flex: 1 1 0px;
+    /* flex: 1 1 0px; */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.45);
 
     font-weight: bold;
+    font-size: clamp(13px, 1.2vw, 40px);
+    width: clamp(250px, 25vw, 500px);
+    height: clamp(75px, 9vw, 150px);
+}
+
+.prompt button:hover {
+    box-shadow: none;
 }
