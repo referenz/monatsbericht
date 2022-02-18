@@ -1,4 +1,4 @@
-import XLSX from 'xlsx';
+import { read, readFile, utils, WorkBook } from 'xlsx';
 
 type Projektliste = Map<string, Record<string, string | number | string[]>>;
 
@@ -45,7 +45,7 @@ class Monatsbericht {
      * @param workbook - Die von XLSX bereits eingelesene Excel-Datei
      * @returns zuordnungen - Eine Map, die als Keys die Blattnamen und als Werte den jeweiligen Handlungsbereich enthält.
      */
-    private get_blattnamen_fuer_handlungsbereiche(workbook: XLSX.WorkBook): Map<string, string> {
+    private get_blattnamen_fuer_handlungsbereiche(workbook: WorkBook): Map<string, string> {
         const zuordnungen = new Map<string, string>();
 
         const blattnamen: Record<string, string[]> = {
@@ -78,8 +78,8 @@ class Monatsbericht {
         return zuordnungen;
     }
 
-    private get_projekte_aus_blatt(blattname: string, workbook: XLSX.WorkBook): Projektliste {
-        const json_liste: Record<string, string | number | string[]>[] = XLSX.utils.sheet_to_json(
+    private get_projekte_aus_blatt(blattname: string, workbook: WorkBook): Projektliste {
+        const json_liste: Record<string, string | number | string[]>[] = utils.sheet_to_json(
             workbook.Sheets[blattname]
         );
         const projekte: Projektliste = new Map();
@@ -119,7 +119,7 @@ class Monatsbericht {
     }
 
     private get_projekte_aus_datei(args: { dateiname: string; buffer: ArrayBuffer } | { datei: string }): Projektliste {
-        const workbook = 'buffer' in args ? XLSX.read(args.buffer) : XLSX.readFile(args.datei);
+        const workbook = 'buffer' in args ? read(args.buffer) : readFile(args.datei);
         const dateiname = 'buffer' in args ? args.dateiname : args.datei;
 
         this.zuordnungen = this.get_blattnamen_fuer_handlungsbereiche(workbook);
