@@ -1,8 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
-import './Comparison.css';
-import VergleichsTabellen from './VergleichsTabellen';
-import Listing from './Listing';
+import Projektliste from './Projektliste';
 import Monatsbericht from '../Monatsbericht';
 import FileBufferObj from '../types/FileBufferObj';
 
@@ -37,13 +35,14 @@ function Comparison(props: {
     }, [monatsbericht_alt, props.monatsbericht]);
     return (
         <Container className={props.className + ' vergleich'}>
-            <h2>Abweichende Fördersummen</h2>
             {abweichung_foerder && abweichung_foerder.length > 0 && (
-                <VergleichsTabellen
-                    daten={abweichung_foerder}
+                <Projektliste
+                    abweichende_daten={abweichung_foerder}
                     monatsbericht={props.monatsbericht.current}
                     monatsbericht_alt={monatsbericht_alt.current}
-                />
+                >
+                    Abweichende Fördersummen
+                </Projektliste>
             )}
             {abweichung_foerder && abweichung_foerder.length === 0 && <p>Keine abweichenden Fördersummen</p>}
 
@@ -54,21 +53,21 @@ function Comparison(props: {
             {abweichung_projektzahl && (
                 <>
                     {abweichung_projektzahl[0].size > 0 && (
-                        <Listing
-                            projekte={Array.from(abweichung_projektzahl[0])}
+                        <Projektliste
                             monatsbericht={props.monatsbericht.current}
+                            projekte={Array.from(abweichung_projektzahl[0])}
                         >
                             Hinzugekommene Projekte
-                        </Listing>
+                        </Projektliste>
                     )}
 
                     {abweichung_projektzahl[1].size > 0 && (
-                        <Listing
-                            projekte={Array.from(abweichung_projektzahl[1])}
+                        <Projektliste
                             monatsbericht={monatsbericht_alt.current}
+                            projekte={Array.from(abweichung_projektzahl[1])}
                         >
                             Weggefallene Projekte
-                        </Listing>
+                        </Projektliste>
                     )}
                     {abweichung_projektzahl[0].size === 0 && abweichung_projektzahl[1].size === 0 && (
                         <p>Keine hinzugekommenen oder entfernten Projekte</p>

@@ -14,8 +14,8 @@ function Prompt(props: {
                 <p>Datei &quot;{props.datei.name}&quot; wurde eingelesen.</p>
             </Row>
             <Row className="buttonrow">
-                <Button>Diesen Monatsbericht auswerten</Button>
-                <Button onClick={(_) => props.setGlobalState('GO_FOR_SECOND')}>
+                <Button onClick={() => props.setGlobalState('GO_FOR_ANALYSIS')}>Diesen Monatsbericht auswerten</Button>
+                <Button onClick={() => props.setGlobalState('GO_FOR_SECOND')}>
                     Diesen Monatsbericht mit älterem Monatsbericht vergleichen
                 </Button>
             </Row>

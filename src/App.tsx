@@ -5,6 +5,7 @@ import './App.css';
 import Footer from './components/Footer';
 import UploadForm from './components/UploadForm';
 import Prompt from './components/Prompt';
+import Analyse from './components/Analyse';
 import Comparison from './components/Comparison';
 import GlobalState from './types/GlobalState';
 import FileBufferObj from './types/FileBufferObj';
@@ -41,10 +42,18 @@ function App() {
                 in={globalState === 'PROMPT'}
                 unmountOnExit={true}
                 mountOnEnter={true}
-                onExited={(_) => setGlobalState('WAIT_FOR_SECOND')}
+                onExited={(_) => {
+                    if (globalState === 'GO_FOR_SECOND') setGlobalState('WAIT_FOR_SECOND');
+                    if (globalState === 'GO_FOR_ANALYSIS') setGlobalState('ANALYSIS');
+                }}
             >
                 <Container>
                     <Prompt className="mt-4" setGlobalState={setGlobalState} datei={datei_neu.current} />
+                </Container>
+            </Fade>
+            <Fade in={globalState === 'ANALYSIS'} unmountOnExit={true} mountOnEnter={true}>
+                <Container>
+                    <Analyse monatsbericht={monatsbericht.current} />
                 </Container>
             </Fade>
             <Fade

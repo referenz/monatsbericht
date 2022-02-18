@@ -137,8 +137,28 @@ class Monatsbericht {
         return projekte;
     }
 
-    // STUB
-    public get_projekte(handlungsbereich?: string) {
+    // TODO: Nur Projekte eines bestimmten handlungsbereichs ausgeben
+    public get_projekte(options?: { ordered?: boolean }) {
+        if (options?.ordered === true) {
+            const ordered: Map<string, string[]> = new Map();
+            Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => ordered.set(handlungsbereich, []));
+
+            this.projekte.forEach((_, projektnummer) => {
+                const handlungsbereich_aktuell = this.get_projekt(projektnummer, 'Handlungsbereich') as string;
+
+                const liste = ordered.get(handlungsbereich_aktuell);
+                liste.push(projektnummer);
+                ordered.delete(handlungsbereich_aktuell);
+                ordered.set(handlungsbereich_aktuell, liste);
+            });
+
+            const values = Array.from(ordered.entries());
+            values.forEach((value) => {
+                if (value[1].length === 0) ordered.delete(value[0]);
+            });
+
+            return ordered;
+        }
         return this.projekte;
     }
 
@@ -195,6 +215,7 @@ class Monatsbericht {
     /**
      * Hilfsfunktion für die öffentliche Funktion `abweichung_projektzahl()`, die die gefundenen Projekt nach
      * Handlungsbereichen sortiert.
+     * TODO: Umbenennen in ordne_nach_handlungsbereichen
      * @param projekte Array mit den Projektnummern
      * @param alt Optional: Object der Klasse `Monatsbericht` mit dem alten Monatsbericht
      * @returns Map mit den Handlungsberichen als Schlüssel
