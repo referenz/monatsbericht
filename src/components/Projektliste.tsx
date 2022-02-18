@@ -73,7 +73,6 @@ function Projektliste(props: {
             : zuordnungen
                   .get(handlungsbereich[0])
                   .filter((feld) => feld !== 'Bewilligungszeit' && feld !== 'Projektlaufzeit');
-        console.log(columns);
 
         const rows = [];
         handlungsbereich[1].forEach((projekt: string) => {
