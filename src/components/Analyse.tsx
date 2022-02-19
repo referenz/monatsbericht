@@ -38,13 +38,13 @@ function Analyse(props: { monatsbericht: Monatsbericht }) {
             gezaehlteThemenfelder.set(handlungsbereich, gezaehlteThemen);
         });
         setThemenfelder(gezaehlteThemenfelder);
-        console.log(props.monatsbericht.get_projekt('11K01V'));
     }, []);
 
     const TabelleZaehlung = (
-        <table>
+        <table className="zaehlung">
             <caption>
-                <span className="expand">Auswertung:&nbsp;</span> Zählung
+                <span className="expand">Auswertung:&nbsp;</span>
+                Zählung
             </caption>
             <thead>
                 <tr>
@@ -53,30 +53,25 @@ function Analyse(props: { monatsbericht: Monatsbericht }) {
                     <th>Anzahl Projekte</th>
                 </tr>
             </thead>
-            <tbody>
-                {handlungsbereiche.map((handlungsbereich) => (
-                    <>
-                        <tr key={handlungsbereich[0]} className="handlungsbereich">
-                            <td>{handlungsbereich[0]}</td>
-                            <td></td>
-                            <td className="anzahl">{handlungsbereich[1]}</td>
-                        </tr>
-                        {themenfelder.has(handlungsbereich[0]) && (
-                            <>
-                                {Array.from(themenfelder.get(handlungsbereich[0])).map((daten) => {
-                                    return (
-                                        <tr className="themenfeld">
-                                            <td className="thema-davon"></td>
-                                            <td>{daten[0]}</td>
-                                            <td className="anzahl">{daten[1]}</td>
-                                        </tr>
-                                    );
-                                })}
-                            </>
-                        )}
-                    </>
-                ))}
-            </tbody>
+            {handlungsbereiche.map((handlungsbereich) => (
+                <tbody key={handlungsbereich[0]}>
+                    <tr className="handlungsbereich">
+                        <td>{handlungsbereich[0]}</td>
+                        <td></td>
+                        <td className="anzahl">{handlungsbereich[1]}</td>
+                    </tr>
+                    {themenfelder.has(handlungsbereich[0]) &&
+                        Array.from(themenfelder.get(handlungsbereich[0])).map((daten) => {
+                            return (
+                                <tr key={daten[0]} className="themenfeld">
+                                    <td className="thema-davon"></td>
+                                    <td>{daten[0]}</td>
+                                    <td className="anzahl">{daten[1]}</td>
+                                </tr>
+                            );
+                        })}
+                </tbody>
+            ))}
             <tfoot>
                 <tr>
                     <td>Insgesamt</td>

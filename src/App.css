@@ -33,7 +33,7 @@ table caption.is-pinned span.expand {
   font-size: 100%;
 }
 
-table thead tr {
+table thead  {
   background-color: #009879;
   color: #ffffff;
   text-align: left;
@@ -42,6 +42,27 @@ table thead tr {
   top: 2rem;
   z-index: 2;
 
+}
+
+@supports (-moz-appearance:none) {
+  table caption {
+    position:static;
+  }
+  table thead {
+    top: 0;
+  }
+  }
+
+table tbody {
+  transition: opacity .5s ease-in;
+}
+
+table.collapsing tbody {
+  opacity: 0;
+}
+
+table.collapsing tbody.collapsed {
+  display: none;
 }
 
 table th,
@@ -54,11 +75,7 @@ table tbody tr, table tfoot tr {
   border-bottom: 1px solid #dddddd;
 }
 
-table tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
-}
-
-table tbody tr:last-of-type {
+table :is(tbody:only-of-type, tbody:last-of-type) tr:last-of-type {
   border-bottom: 2px solid #009879;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }

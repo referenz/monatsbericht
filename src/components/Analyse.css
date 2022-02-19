@@ -1,11 +1,15 @@
-td.anzahl, td.thema-davon  {
+table.zaehlung td.anzahl, td.thema-davon  {
     text-align: right;
 }
 
-tr.handlungsbereich {
+table.zaehlung tr.handlungsbereich {
     font-weight: bold;
 }
 
-td.thema-davon::after {
+table.zaehlung td.thema-davon::after {
     content: 'davon';
 }
+
+table.zaehlung tbody:nth-of-type(even) tr {
+    background-color: #f3f3f3;
+  }

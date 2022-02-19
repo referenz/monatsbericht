@@ -31,6 +31,10 @@
     border-top: 1px solid black;
 }
 
+table.projektliste tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+  }
+
 table.projektliste td[class^='zuwendung'] {
     text-align: right;
     white-space: nowrap;
@@ -48,4 +52,18 @@ table.projektliste td.changed span.wert-alt{
 
 table.projektliste td.changed span.wert-neu{
     background-color: yellow;
+}
+
+.collapse-link button {
+    background-color: inherit;
+    border: 0;
+    text-decoration: underline;
+}
+
+.collapse-link button::before {
+    content: '[';
+}
+
+.collapse-link button::after {
+    content: ']';
 }

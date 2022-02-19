@@ -1,10 +1,8 @@
-import { createRef, useEffect, useRef, useState } from 'react';
+import { createRef, ReactFragment, useEffect, useRef, useState } from 'react';
 import './Projektliste.css';
 import Monatsbericht from '../Monatsbericht';
 import Infofelder from '../infofelder.json';
-/*
-import { Button } from 'react-bootstrap';
-*/
+
 function formatCurrency(num: string): string {
     const number = parseFloat(num) || 0;
     if (number === 0) return '';
@@ -95,6 +93,9 @@ function Projektliste(props: {
                 <caption ref={(el) => (caption.current[i] = el)}>
                     {props.children && <span className="expand">{props.children}:&nbsp;</span>}
                     {handlungsbereich[0]}
+                    <span className="collapse-link">
+                        <button>Einklappen</button>
+                    </span>
                 </caption>
                 <thead>
                     <tr>
@@ -111,7 +112,7 @@ function Projektliste(props: {
                                     const key = `${cell.spalte}${cell.value}`;
                                     let curr_class = cell.spalte.replace(' ', '-').replace('.', '').toLowerCase();
 
-                                    let output;
+                                    let output: ReactFragment;
                                     if (cell.spalte === 'Bewilligungszeit' || cell.spalte === 'Projektlaufzeit') {
                                         if (cell.value !== undefined) output = `${cell.value[0]} - ${cell.value[1]}`;
                                         else output = '';
