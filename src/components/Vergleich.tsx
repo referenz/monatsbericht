@@ -49,7 +49,7 @@ function Vergleich(props: {
 
             <h2 className="mt-5">Hinzugekommene oder entfernte Projekte*</h2>
             <p className="text-muted small">
-                * Die Angaben zum Bewilligungszeitraum werden derzeit noch nicht ausgewertet
+                * Die Angaben zur Bewilligungszeit und Gesamtförderzeit und werden derzeit noch nicht ausgewertet
             </p>
             {abweichung_projektzahl && (
                 <>

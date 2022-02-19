@@ -2,33 +2,79 @@ body {
   padding-bottom: 1.5rem;
 }
 
-.container {
-  /*
-  background-color: #aaa;
-  */
+h3 {
+  margin-top: 25px;
 }
 
-.showtoggle {
-  opacity: 1;
-  transition: opacity .7s ease-in .1s;
+table {
+  border-collapse: collapse;
+  margin: 0 0 25px;
+  min-width: 400px;
+  /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); */
 }
 
-.showtoggle.noshow {
-  opacity: 0;
-} 
-
-/* Dieser Umweg ist nötig, weil `display: none` nicht gut mit der Transition zusammenspielt */ 
-.showtoggle.noshow-invisible {
-  visibility: hidden;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 0;
-  width: 0;
-  z-index: -1;
-  overflow: hidden;
+table caption {
+  caption-side: top;
+  font-weight: bold;
+  color: black;
+  background-color: #fff;
+  position: sticky;
+  padding-left: 0px;
+  top: -1px;
+  z-index: 2;
 }
 
-.showtoggle.noshow-hidden {
-  display: none;
+table caption span.expand {
+  font-size: 0;
+  transition: font-size .4s ease-out;
+}
+
+table caption.is-pinned span.expand {
+  font-size: 100%;
+}
+
+table thead tr {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+
+  position: sticky;
+  top: 2rem;
+  z-index: 2;
+
+}
+
+table th,
+table td {
+  font-size: 0.85rem;
+  padding: 12px 15px;
+}
+
+table tbody tr, table tfoot tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+table tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+table tbody tr:hover {
+  background-color: #FAFAD2;
+}
+
+table tfoot td {
+  font-weight: bold;
+}
+
+table tfoot tr {
+  border-bottom: 2px solid #009879;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+  background-color: #009879;
+  color: #ffffff;
 }

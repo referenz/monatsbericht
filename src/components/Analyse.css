@@ -1,0 +1,11 @@
+td.anzahl, td.thema-davon  {
+    text-align: right;
+}
+
+tr.handlungsbereich {
+    font-weight: bold;
+}
+
+td.thema-davon::after {
+    content: 'davon';
+}
