@@ -10,7 +10,6 @@ table {
   border-collapse: collapse;
   margin: 0 0 25px;
   min-width: 400px;
-  /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); */
 }
 
 table caption {
@@ -45,13 +44,22 @@ table thead  {
 }
 
 @supports (-moz-appearance:none) {
-  table caption {
-    position:static;
+  table {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); 
   }
+  table caption {
+    position: static;
+  }
+
   table thead {
     top: 0;
   }
+
+  table caption span.expand {
+    font-size: 100%;
+    transition: none;
   }
+}
 
 table tbody {
   transition: opacity .5s ease-in;
@@ -77,11 +85,10 @@ table tbody tr, table tfoot tr {
 
 table :is(tbody:only-of-type, tbody:last-of-type) tr:last-of-type {
   border-bottom: 2px solid #009879;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
 table tbody tr:hover {
-  background-color: #FAFAD2;
+  background-color: #FAFAD2 !important;
 }
 
 table tfoot td {
