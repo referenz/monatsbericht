@@ -61,6 +61,10 @@ table thead  {
   }
 }
 
+table caption span.collapse-link {
+  display: none;
+}
+
 table tbody {
   transition: opacity .5s ease-in;
 }
