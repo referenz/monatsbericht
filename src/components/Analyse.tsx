@@ -7,37 +7,69 @@ import Monatsbericht from '../Monatsbericht';
 import Themenfelder from '../themenfelder.json';
 
 function Analyse(props: { monatsbericht: Monatsbericht }) {
-    const [handlungsbereiche, setHandlungsbereiche] = useState([]);
+    const [auszaehlung, setAuszaehlung] = useState({});
+
     useEffect(() => {
-        const projekte = Array.from(
-            (props.monatsbericht.get_projekte({ ordered: true }) as Map<string, string[]>).entries()
+        let projektliste = Array.from(
+            props.monatsbericht.get_projekte() as Map<string, Record<string, string | number | string[]>>
         );
 
-        setHandlungsbereiche(projekte.map((handlungsbereich) => [handlungsbereich[0], handlungsbereich[1].length]));
-    }, []);
-
-    const [themenfelder, setThemenfelder] = useState(new Map());
-    useEffect(() => {
-        const themenfelder = new Map(Object.entries(Themenfelder));
-        const projekte = props.monatsbericht.get_projekte({ ordered: true }) as Map<string, string[]>;
-
-        const gezaehlteThemenfelder: Map<string, Map<string, number>> = new Map();
-        themenfelder.forEach((themen, handlungsbereich) => {
-            const gezaehlteThemen: Map<string, number> = new Map();
-            themen.forEach((thema) => {
-                let counter = 0;
-                projekte.get(handlungsbereich).forEach((projektnr) => {
-                    if (
-                        (props.monatsbericht.get_projekt(projektnr, 'Themenfeld') as string).trim().toLowerCase() ===
-                        thema.trim().toLowerCase()
-                    )
-                        counter++;
-                });
-                gezaehlteThemen.set(thema, counter);
-            });
-            gezaehlteThemenfelder.set(handlungsbereich, gezaehlteThemen);
+        const projektauszaehlung = {};
+        Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => {
+            projektauszaehlung[handlungsbereich] = { Projekte: [] };
+            const themenfelder = (Themenfelder[handlungsbereich] as string[]) ?? null;
+            if (themenfelder) {
+                const themenobj = {};
+                themenfelder.forEach((thema) => (themenobj[thema] = []));
+                projektauszaehlung[handlungsbereich]['Themenfelder'] = themenobj;
+            }
         });
-        setThemenfelder(gezaehlteThemenfelder);
+
+        projektliste.forEach((projekt) => {
+            const projekt_handlungsbereich = (projekt[1]['Handlungsbereich'] as string) ?? null;
+            projektauszaehlung[projekt_handlungsbereich]['Projekte']?.push(projekt[0]);
+
+            if ('Themenfelder' in projektauszaehlung[projekt_handlungsbereich]) {
+                const projekt_themenfeld = projekt[1]['Themenfeld'] as string;
+
+                // Den Umweg über `zuzuweisendes_themenfeld` muss wegen inkonsistenter Groß- und Kleinschreibung
+                // im Monatsbericht gemacht werden
+                const themenfelder: string[] = Object.keys(
+                    projektauszaehlung[projekt_handlungsbereich]['Themenfelder']
+                );
+                const index = themenfelder.findIndex(
+                    (thema) => projekt_themenfeld.toLowerCase().trim() === thema.toLowerCase().trim()
+                );
+                const zuzuweisendes_themenfeld = themenfelder[index];
+
+                projektauszaehlung[projekt_handlungsbereich]['Themenfelder'][zuzuweisendes_themenfeld]?.push(
+                    projekt[0]
+                );
+                projektauszaehlung[projekt_handlungsbereich]['Projekte'].pop();
+            }
+
+            if (projekt_handlungsbereich in projektauszaehlung) projektliste = projektliste.slice(1);
+        });
+        projektauszaehlung['Rest'] = {
+            Projekte: [],
+        };
+
+        let counter = 0;
+        for (const [name_hb, handlungsbereich] of Object.entries(projektauszaehlung)) {
+            counter += handlungsbereich?.['Projekte']?.length ?? 0;
+            if (handlungsbereich?.['Projekte']?.length === 0) {
+                let counter_thema = 0;
+                for (const [, themen] of Object.entries(handlungsbereich)) {
+                    for (const [, thema] of Object.entries(themen)) {
+                        counter += (thema as string[])?.length ?? 0;
+                        counter_thema += (thema as string[])?.length ?? 0;
+                    }
+                }
+                projektauszaehlung[name_hb]['themen_addiert'] = counter_thema;
+            }
+        }
+        projektauszaehlung['gesamt'] = counter;
+        setAuszaehlung(projektauszaehlung);
     }, []);
 
     const TabelleZaehlung = (
@@ -53,30 +85,41 @@ function Analyse(props: { monatsbericht: Monatsbericht }) {
                     <th>Anzahl Projekte</th>
                 </tr>
             </thead>
-            {handlungsbereiche.map((handlungsbereich) => (
-                <tbody key={handlungsbereich[0]}>
+            {Monatsbericht.handlungsbereiche.map((handlungsbereich) => (
+                <tbody key={handlungsbereich}>
                     <tr className="handlungsbereich">
-                        <td>{handlungsbereich[0]}</td>
+                        <td>{handlungsbereich}</td>
                         <td></td>
-                        <td className="anzahl">{handlungsbereich[1]}</td>
+                        <td className="anzahl">
+                            {auszaehlung[handlungsbereich]?.['Themenfelder'] === undefined &&
+                                auszaehlung[handlungsbereich]?.['Projekte'].length}
+                            {auszaehlung[handlungsbereich]?.['Themenfelder'] !== undefined &&
+                                auszaehlung[handlungsbereich]?.['themen_addiert']}
+                        </td>
                     </tr>
-                    {themenfelder.has(handlungsbereich[0]) &&
-                        Array.from(themenfelder.get(handlungsbereich[0])).map((daten) => {
-                            return (
-                                <tr key={daten[0]} className="themenfeld">
-                                    <td className="thema-davon"></td>
-                                    <td>{daten[0]}</td>
-                                    <td className="anzahl">{daten[1]}</td>
-                                </tr>
-                            );
-                        })}
+                    {auszaehlung[handlungsbereich]?.['Themenfelder'] !== undefined &&
+                        Array.from(Object.entries(auszaehlung[handlungsbereich]['Themenfelder'])).map((thema) => (
+                            <tr key={thema[0]}>
+                                <td className="thema-davon"></td>
+                                <td>{thema[0]}</td>
+                                <td className="anzahl">{(thema[1] as string[]).length}</td>
+                            </tr>
+                        ))}
+                    {auszaehlung[handlungsbereich]?.['Themenfelder'] !== undefined &&
+                        auszaehlung[handlungsbereich]?.['Projekte'].length > 0 && (
+                            <tr>
+                                <td className="thema-davon"></td>
+                                <td className="nicht-zuzuordnen">nicht zuzuordnen</td>
+                                <td>auszaehlung[handlungsbereich]?.['Projekte'].length</td>
+                            </tr>
+                        )}
                 </tbody>
             ))}
             <tfoot>
                 <tr>
                     <td>Insgesamt</td>
                     <td className="anzahl" colSpan={2}>
-                        {props.monatsbericht.get_projekte().size}
+                        {auszaehlung['gesamt']}
                     </td>
                 </tr>
             </tfoot>
@@ -91,7 +134,7 @@ function Analyse(props: { monatsbericht: Monatsbericht }) {
                 Monatsbericht wird einfach durchgezählt.
             </p>
             <h3>Statistische Auswertungen</h3>
-            {themenfelder && TabelleZaehlung}
+            {auszaehlung && TabelleZaehlung}
             <p>Mehr Auswertungen kommen vielleicht noch &#8230;</p>
             <Projektliste monatsbericht={props.monatsbericht}>Projektliste</Projektliste>
         </Container>
