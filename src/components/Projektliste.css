@@ -58,6 +58,7 @@ table.projektliste td.changed span.wert-neu{
     background-color: inherit;
     border: 0;
     text-decoration: underline;
+    color: inherit;
 }
 
 .collapse-link button::before {

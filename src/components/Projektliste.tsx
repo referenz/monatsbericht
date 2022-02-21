@@ -1,4 +1,4 @@
-import { createRef, ReactFragment, useEffect, useRef, useState } from 'react';
+import { createRef, ReactFragment, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import './Projektliste.css';
 import Monatsbericht from '../Monatsbericht';
 import Infofelder from '../infofelder.json';
@@ -88,13 +88,29 @@ function Projektliste(props: {
 
         caption.current[i] = createRef();
 
+        function collapseTable(e: SyntheticEvent) {
+            const button = e.target as HTMLButtonElement;
+            button.innerText = (e.target as HTMLButtonElement).innerText === 'Einklappen' ? 'Ausklappen' : 'Einklappen';
+
+            const table = button.parentElement.parentElement.parentElement.parentElement as HTMLTableElement;
+            if (table.classList.contains('collapsed')) table.classList.remove('collapsed');
+            table.classList.toggle('collapsing');
+            table.addEventListener('transitionend', () => {
+                if (table.classList.contains('collapsing')) table.classList.add('collapsed');
+            });
+        }
+
         return (
             <table key={handlungsbereich[0]} className="projektliste" id={handlungsbereich[0]}>
                 <caption ref={(el) => (caption.current[i] = el)}>
-                    {props.children && <span className="expand">{props.children}:&nbsp;</span>}
-                    {handlungsbereich[0]}
-                    <span className="collapse-link">
-                        <button>Einklappen</button>
+                    <span className="caption-flexbox">
+                        <span className="caption-text">
+                            {props.children && <span className="expand">{props.children}:&nbsp;</span>}
+                            {handlungsbereich[0]}
+                        </span>
+                        <span className="collapse-link">
+                            <button onClick={(e) => collapseTable(e)}>Einklappen</button>
+                        </span>
                     </span>
                 </caption>
                 <thead>
@@ -155,7 +171,7 @@ function Projektliste(props: {
         const observer = new IntersectionObserver(
             ([e]) => e.target.classList.toggle('is-pinned', e.intersectionRatio < 1),
             {
-                rootMargin: '0px 0px 200px 0px',
+                rootMargin: '0px 0px 100000px 0px',
                 threshold: [1],
             }
         );
