@@ -69,7 +69,6 @@ function Analyse(props: { monatsbericht: Monatsbericht }) {
             }
         }
         projektauszaehlung['gesamt'] = counter;
-        console.log(projektauszaehlung);
         setAuszaehlung(projektauszaehlung);
     }, []);
 

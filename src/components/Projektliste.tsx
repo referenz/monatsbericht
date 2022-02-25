@@ -107,7 +107,11 @@ function Projektliste(props: {
         }
 
         return (
-            <table key={handlungsbereich[0]} className="projektliste" id={handlungsbereich[0]}>
+            <table
+                key={handlungsbereich[0]}
+                className="projektliste"
+                id={props.mode === 'Liste' ? handlungsbereich[0] : undefined}
+            >
                 <caption ref={(el) => (caption.current[i] = el)}>
                     <span className="caption-flexbox">
                         <span className="caption-text">

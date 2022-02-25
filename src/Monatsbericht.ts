@@ -204,7 +204,6 @@ class Monatsbericht {
         this.projekte.forEach((projektdaten, projektnr) => {
             const abweichende_felder: string[] = [];
             vergleichsfelder.forEach((feld) => {
-                console.log(feld);
                 if (projekte_alt?.has(projektnr) && projektdaten[feld] !== projekte_alt.get(projektnr)?.[feld])
                     abweichende_felder.push(feld);
             });
