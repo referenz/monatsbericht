@@ -3,7 +3,7 @@ import { read, readFile, utils, WorkBook } from 'xlsx';
 type Projektliste = Map<string, Record<string, string | number | string[]>>;
 
 class Monatsbericht {
-    static vergleichsfelder = ['Zuwendung 2020', 'Zuwendung 2021', 'Zuwendung 2022', 'Zuwendung 2023'];
+    static vergleichsfelder_zuwendungen = ['Zuwendung 2020', 'Zuwendung 2021', 'Zuwendung 2022', 'Zuwendung 2023'];
 
     static handlungsbereiche = [
         'Kommune',
@@ -190,16 +190,21 @@ class Monatsbericht {
         return ordered;
     }
 
-    public abweichung_foerdersummen(
+    public abweichung_projektdaten(
         alt: Monatsbericht,
+        vergleich: 'Zuwendungen' | 'Bezeichnungen',
         options?: { ordered?: boolean }
     ): Map<string, string[]> | Map<string, Map<string, string[]>> {
         const projekte_alt = alt.get_projekte();
         const projekte_abweichende: Map<string, string[]> = new Map();
 
+        const vergleichsfelder =
+            vergleich === 'Zuwendungen' ? Monatsbericht.vergleichsfelder_zuwendungen : ['Trägername', 'Projekttitel'];
+
         this.projekte.forEach((projektdaten, projektnr) => {
             const abweichende_felder: string[] = [];
-            Monatsbericht.vergleichsfelder.forEach((feld) => {
+            vergleichsfelder.forEach((feld) => {
+                console.log(feld);
                 if (projekte_alt?.has(projektnr) && projektdaten[feld] !== projekte_alt.get(projektnr)?.[feld])
                     abweichende_felder.push(feld);
             });

@@ -12,6 +12,7 @@ function Vergleich(props: {
     const monatsbericht_alt = useRef<Monatsbericht>(null);
     const [abweichung_foerder, setAbweichung_foerder] = useState<[string, Map<string, string[]>][]>(null);
     const [abweichung_projektzahl, setAbweichung_projektzahl] = useState(null);
+    const [abweichung_bezeichnung, setAbweichung_bezeichnung] = useState(null);
 
     useEffect(() => {
         monatsbericht_alt.current = Monatsbericht.fromArrayBuffer(
@@ -23,7 +24,15 @@ function Vergleich(props: {
     useEffect(() => {
         setAbweichung_foerder(
             Array.from(
-                props.monatsbericht.current.abweichung_foerdersummen(monatsbericht_alt.current, {
+                props.monatsbericht.current.abweichung_projektdaten(monatsbericht_alt.current, 'Zuwendungen', {
+                    ordered: true,
+                }) as Map<string, Map<string, string[]>>
+            )
+        );
+
+        setAbweichung_bezeichnung(
+            Array.from(
+                props.monatsbericht.current.abweichung_projektdaten(monatsbericht_alt.current, 'Bezeichnungen', {
                     ordered: true,
                 }) as Map<string, Map<string, string[]>>
             )
@@ -33,10 +42,12 @@ function Vergleich(props: {
             props.monatsbericht.current.abweichung_projektzahl(monatsbericht_alt.current, { ordered: true })
         );
     }, [monatsbericht_alt, props.monatsbericht]);
+
     return (
         <Container className={props.className + ' vergleich'}>
             {abweichung_foerder && abweichung_foerder.length > 0 && (
                 <Projektliste
+                    mode="Vergleich_Zuwendung"
                     abweichende_daten={abweichung_foerder}
                     monatsbericht={props.monatsbericht.current}
                     monatsbericht_alt={monatsbericht_alt.current}
@@ -46,6 +57,18 @@ function Vergleich(props: {
                 </Projektliste>
             )}
             {abweichung_foerder && abweichung_foerder.length === 0 && <p>Keine abweichenden Fördersummen</p>}
+
+            {abweichung_bezeichnung && abweichung_bezeichnung.length > 0 && (
+                <Projektliste
+                    mode="Vergleich_Bezeichnung"
+                    abweichende_daten={abweichung_bezeichnung}
+                    monatsbericht={props.monatsbericht.current}
+                    monatsbericht_alt={monatsbericht_alt.current}
+                    tabellen_headline_h2={true}
+                >
+                    Abweichende Bezeichung von Trägername oder Projekttitel
+                </Projektliste>
+            )}
 
             <h2 className="mt-5">Hinzugekommene oder entfernte Projekte*</h2>
             <p className="text-muted small">

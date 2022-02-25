@@ -137,7 +137,9 @@ function Analyse(props: { monatsbericht: Monatsbericht }) {
             <h3>Statistische Auswertungen</h3>
             {auszaehlung && TabelleZaehlung}
             <p>Mehr Auswertungen kommen vielleicht noch &#8230;</p>
-            <Projektliste monatsbericht={props.monatsbericht}>Projektliste</Projektliste>
+            <Projektliste mode="Liste" monatsbericht={props.monatsbericht}>
+                Projektliste
+            </Projektliste>
         </Container>
     );
 }

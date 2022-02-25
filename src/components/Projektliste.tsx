@@ -11,7 +11,8 @@ function formatCurrency(num: string): string {
 
 function Projektliste(props: {
     monatsbericht: Monatsbericht;
-    projekte?: string[][]; // [Handlungsbereich[Projektnummer]]
+    mode?: 'Liste' | 'Vergleich_Zuwendung' | 'Vergleich_Bezeichnung';
+    projekte?: string[][]; //[Handlungsbereich[Projektnummer]]
     monatsbericht_alt?: Monatsbericht;
     abweichende_daten?: [string, Map<string, string[]>][]; // [Handlungsbereich[Map<projektnummer, abweichende]]
     tabellen_headline_h2?: boolean;
@@ -23,7 +24,7 @@ function Projektliste(props: {
     const [zuordnungen, setZuordnungen] = useState<Map<string, string[]>>();
     useEffect(() => {
         let zuwendungsfelder = [];
-        if (props.abweichende_daten) zuwendungsfelder = Monatsbericht.vergleichsfelder;
+        if (props.mode === 'Vergleich_Zuwendung') zuwendungsfelder = Monatsbericht.vergleichsfelder_zuwendungen;
         const hilfszuordnung = new Map();
         const infofelder = new Map(Object.entries(Infofelder));
         Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => {
@@ -40,11 +41,16 @@ function Projektliste(props: {
     const [projektliste, setProjektliste] = useState([]); // [Handlungsbereich[Projektnummer]]
     const [abweichendeFelder, setAbweichendeFelder] = useState(new Map());
     useEffect(() => {
-        // Fall 1: Ausgabe aller Projekte, geordnet nach Handlungsbereichen
-        if (!props.projekte && !props.abweichende_daten)
-            setProjektliste(Array.from(props.monatsbericht.get_projekte({ ordered: true }) as Map<string, string[]>));
-        // Fall 2: Ausgabe der Projekte mit abweichenden Fördersummen, geordnet nach Handlungsbereichen
-        else if (props.abweichende_daten) {
+        // Fall 1: Ausgabe aller Projekte, geordnet nach Handlungsbereichen oder Ausgabe der angegebenen Projekte
+        if (props.mode === 'Liste' || !props.mode) {
+            setProjektliste(
+                !props.projekte
+                    ? Array.from(props.monatsbericht.get_projekte({ ordered: true }) as Map<string, string[]>)
+                    : props.projekte
+            );
+        }
+        // Fall 2: Ausgabe der Projekte mit Abweichungen, geordnet nach Handlungsbereichen
+        else if (props.mode === 'Vergleich_Zuwendung' || props.mode === 'Vergleich_Bezeichnung') {
             // Überführung in das Projektlisten-Format [Handlungsbereich[Projektnummer]] + paralleles Verzeichnis
             // mit abweichenden Feldern für jedes Projekt
             const projekte = [];
@@ -60,18 +66,18 @@ function Projektliste(props: {
             setProjektliste(projekte);
             setAbweichendeFelder(new Map(abweichende));
         }
-        // Fall 3: Ausgabe nur bestimmer Projekte, geordnet nach Handlungsbereichen
-        else setProjektliste(props.projekte);
     }, []);
 
     const Tabellen = projektliste.map((handlungsbereich, i) => {
         if (zuordnungen === undefined) return null;
 
-        const columns = !props.abweichende_daten
-            ? zuordnungen.get(handlungsbereich[0])
-            : zuordnungen
-                  .get(handlungsbereich[0])
-                  .filter((feld) => feld !== 'Bewilligungszeit' && feld !== 'Projektlaufzeit');
+        let columns = [];
+        if (props.mode === 'Liste' || !props.mode) columns = zuordnungen.get(handlungsbereich[0]);
+        else if (props.mode === 'Vergleich_Zuwendung')
+            columns = zuordnungen
+                .get(handlungsbereich[0])
+                .filter((feld) => feld !== 'Bewilligungszeit' && feld !== 'Projektlaufzeit');
+        else if (props.mode === 'Vergleich_Bezeichnung') columns = ['Projektnr.', 'Trägername', 'Projekttitel'];
 
         const rows = [];
         handlungsbereich[1].forEach((projekt: string) => {
@@ -132,7 +138,10 @@ function Projektliste(props: {
                                     if (cell.spalte === 'Bewilligungszeit' || cell.spalte === 'Projektlaufzeit') {
                                         if (cell.value !== undefined) output = `${cell.value[0]} - ${cell.value[1]}`;
                                         else output = '';
-                                    } else if (cell.spalte.startsWith('Zuwendung')) {
+                                    } else if (
+                                        props.mode === 'Vergleich_Zuwendung' &&
+                                        cell.spalte.startsWith('Zuwendung')
+                                    ) {
                                         const changed = abweichendeFelder.get(projekt[0].value).includes(cell.spalte);
                                         if (changed) curr_class += ' changed';
                                         output = (
@@ -147,6 +156,21 @@ function Projektliste(props: {
                                                 </span>
                                                 <br />
                                                 <span className="wert-neu">{formatCurrency(cell.value)}</span>
+                                            </>
+                                        );
+                                    } else if (
+                                        props.mode === 'Vergleich_Bezeichnung' &&
+                                        (cell.spalte === 'Trägername' || cell.spalte === 'Projekttitel')
+                                    ) {
+                                        const changed = abweichendeFelder.get(projekt[0].value).includes(cell.spalte);
+                                        if (changed) curr_class += ' changed';
+                                        output = (
+                                            <>
+                                                <span className="wert-alt">
+                                                    {props.monatsbericht_alt.get_projekt(projekt[0].value, cell.spalte)}
+                                                </span>
+                                                <br />
+                                                <span className="wert-neu">{cell.value}</span>
                                             </>
                                         );
                                     } else output = cell.value;
