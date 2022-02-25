@@ -51,7 +51,7 @@ function Analyse(props: { monatsbericht: Monatsbericht }) {
             if (projekt_handlungsbereich in projektauszaehlung) projektliste = projektliste.slice(1);
         });
         projektauszaehlung['Rest'] = {
-            Projekte: [],
+            Projekte: projektliste,
         };
 
         let counter = 0;
@@ -59,8 +59,8 @@ function Analyse(props: { monatsbericht: Monatsbericht }) {
             counter += handlungsbereich?.['Projekte']?.length ?? 0;
             if (handlungsbereich?.['Projekte']?.length === 0) {
                 let counter_thema = 0;
-                for (const [, themen] of Object.entries(handlungsbereich)) {
-                    for (const [, thema] of Object.entries(themen)) {
+                for (const themen of Object.values(handlungsbereich)) {
+                    for (const thema of Object.values(themen)) {
                         counter += (thema as string[])?.length ?? 0;
                         counter_thema += (thema as string[])?.length ?? 0;
                     }
@@ -69,6 +69,7 @@ function Analyse(props: { monatsbericht: Monatsbericht }) {
             }
         }
         projektauszaehlung['gesamt'] = counter;
+        console.log(projektauszaehlung);
         setAuszaehlung(projektauszaehlung);
     }, []);
 
