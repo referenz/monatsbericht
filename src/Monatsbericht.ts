@@ -20,7 +20,6 @@ class Monatsbericht {
     ];
 
     projekte: Projektliste;
-    handlungsbereiche: string[];
     zuordnungen: Map<string, string>;
 
     private constructor(args: { datei: string } | { buffer: [string, ArrayBuffer] }) {

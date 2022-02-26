@@ -1,12 +1,12 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { MutableRefObject, useRef, useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import Projektliste from './Projektliste';
 import Monatsbericht from '../Monatsbericht';
 import FileBufferObj from '../types/FileBufferObj';
 
 function Vergleich(props: {
-    datei_alt: React.MutableRefObject<FileBufferObj>;
-    monatsbericht: React.MutableRefObject<Monatsbericht>;
+    datei_alt: MutableRefObject<FileBufferObj>;
+    monatsbericht: MutableRefObject<Monatsbericht>;
     className?: string;
 }) {
     const monatsbericht_alt = useRef<Monatsbericht>(null);
