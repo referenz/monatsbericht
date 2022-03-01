@@ -1,18 +1,19 @@
 import Monatsbericht from '../Monatsbericht';
 
-function Endende(props: { monatsbericht: Monatsbericht }) {
-    const endende_projekte = props.monatsbericht.get_geendete_projekte() as string[];
-    if (endende_projekte.length === 0) return <p>Keine in diesem Jahr bisher geendeten Projekte gefunden</p>;
+function Geendete(props: { monatsbericht: Monatsbericht }) {
+    const geendete_projekte = props.monatsbericht.get_geendete_projekte() as string[];
+    if (geendete_projekte.length === 0) return <p>Keine in diesem Jahr bisher geendeten Projekte gefunden</p>;
 
     const columns = ['Projektnr.', 'Trägername', 'Projekttitel', 'Handlungsbereich', 'Projektlaufzeit'];
 
-    const rows = endende_projekte.map((projektnr) => {
+    const rows = geendete_projekte.map((projektnr) => {
         return columns.map((spalte) => props.monatsbericht.get_projekt(projektnr, spalte));
     });
 
     return (
         <table className="endende">
             <caption>
+                <span className="expand">Auswertung:&nbsp;</span>
                 In diesem Jahr geendete Projekte (Stand:{' '}
                 {new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })} )
             </caption>
@@ -40,4 +41,4 @@ function Endende(props: { monatsbericht: Monatsbericht }) {
     );
 }
 
-export default Endende;
+export default Geendete;

@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
-import Monatsbericht from '../Monatsbericht';
+import Monatsbericht, { Projektliste } from '../Monatsbericht';
 import Themenfelder from '../themenfelder.json';
 
 function Zaehlung(props: { monatsbericht: Monatsbericht }) {
     const [auszaehlung, setAuszaehlung] = useState({});
 
     useEffect(() => {
-        let projektliste = Array.from(
-            props.monatsbericht.get_projekte() as Map<string, Record<string, string | number | string[]>>
-        );
+        let projektliste = Array.from(props.monatsbericht.get_projekte({ ohne_geendete: true }) as Projektliste);
 
         const projektauszaehlung = {};
         Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => {

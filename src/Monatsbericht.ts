@@ -1,6 +1,6 @@
 import { read, readFile, utils, WorkBook } from 'xlsx';
 
-type Projektliste = Map<string, Record<string, string | number | string[]>>;
+export type Projektliste = Map<string, Record<string, string | number | string[]>>;
 
 class Monatsbericht {
     static vergleichsfelder_zuwendungen = ['Zuwendung 2020', 'Zuwendung 2021', 'Zuwendung 2022', 'Zuwendung 2023'];
@@ -136,13 +136,17 @@ class Monatsbericht {
         return projekte;
     }
 
-    // TODO: Nur Projekte eines bestimmten handlungsbereichs ausgeben
-    public get_projekte(options?: { ordered?: boolean }) {
+    public get_projekte(options?: { ordered?: boolean; ohne_geendete?: boolean }) {
+        const projektliste = this.projekte;
+
+        if (options?.ohne_geendete === true)
+            (this.get_geendete_projekte() as string[]).forEach((projektnr) => projektliste.delete(projektnr));
+
         if (options?.ordered === true) {
             const ordered: Map<string, string[]> = new Map();
             Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => ordered.set(handlungsbereich, []));
 
-            this.projekte.forEach((_, projektnummer) => {
+            projektliste.forEach((_, projektnummer) => {
                 const handlungsbereich_aktuell = this.get_projekt(projektnummer, 'Handlungsbereich') as string;
 
                 const liste = ordered.get(handlungsbereich_aktuell);
@@ -158,7 +162,7 @@ class Monatsbericht {
 
             return ordered;
         }
-        return this.projekte;
+        return projektliste;
     }
 
     public get_projekt(projektnr: string, feld?: string) {
