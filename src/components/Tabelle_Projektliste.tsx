@@ -1,5 +1,5 @@
 import { createRef, ReactFragment, SyntheticEvent, useEffect, useRef, useState } from 'react';
-import './Projektliste.css';
+import './Tabelle_Projektliste.css';
 import Monatsbericht from '../Monatsbericht';
 import Infofelder from '../infofelder.json';
 

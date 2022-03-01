@@ -261,6 +261,21 @@ class Monatsbericht {
             ? [this.orderListe(neue_projekte), this.orderListe(alte_projekte, alt)]
             : [neue_projekte, alte_projekte];
     }
+
+    public get_geendete_projekte(options?: { ordered?: boolean; zeitpunkt?: Date }) {
+        const enddatum_auswertung = options?.zeitpunkt ?? new Date();
+        const endende_projekte: string[] = [];
+
+        this.projekte.forEach((projektdaten, projektnummer) => {
+            if (projektdaten?.['Projektlaufzeit']?.[1] !== undefined) {
+                const [day, month, year] = projektdaten['Projektlaufzeit'][1].split('.');
+                const enddatum_projekt = new Date(`${year}-${month}-${day}`);
+                if (enddatum_projekt.valueOf() < enddatum_auswertung.valueOf()) endende_projekte.push(projektnummer);
+            }
+        });
+
+        return options?.ordered === true ? this.orderListe(endende_projekte) : endende_projekte;
+    }
 }
 
 export default Monatsbericht;

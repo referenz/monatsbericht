@@ -1,6 +1,6 @@
 import { MutableRefObject, useRef, useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
-import Projektliste from './Projektliste';
+import Projektliste from './Tabelle_Projektliste';
 import Monatsbericht from '../Monatsbericht';
 import FileBufferObj from '../types/FileBufferObj';
 

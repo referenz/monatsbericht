@@ -1,131 +1,12 @@
-import { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import './Analyse.css';
-import './Projektliste.css';
-import Projektliste from './Projektliste';
+import Zaehlung from './Tabelle_Zaehlung';
+import './Tabelle_Projektliste.css';
+import Endende from './Tabelle_Endende';
+import Projektliste from './Tabelle_Projektliste';
 import Monatsbericht from '../Monatsbericht';
-import Themenfelder from '../themenfelder.json';
 
 function Analyse(props: { monatsbericht: Monatsbericht }) {
-    const [auszaehlung, setAuszaehlung] = useState({});
-
-    useEffect(() => {
-        let projektliste = Array.from(
-            props.monatsbericht.get_projekte() as Map<string, Record<string, string | number | string[]>>
-        );
-
-        const projektauszaehlung = {};
-        Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => {
-            projektauszaehlung[handlungsbereich] = { Projekte: [] };
-            const themenfelder = (Themenfelder[handlungsbereich] as string[]) ?? null;
-            if (themenfelder) {
-                const themenobj = {};
-                themenfelder.forEach((thema) => (themenobj[thema] = []));
-                projektauszaehlung[handlungsbereich]['Themenfelder'] = themenobj;
-            }
-        });
-
-        projektliste.forEach((projekt) => {
-            const projekt_handlungsbereich = (projekt[1]['Handlungsbereich'] as string) ?? null;
-            projektauszaehlung[projekt_handlungsbereich]['Projekte']?.push(projekt[0]);
-
-            if ('Themenfelder' in projektauszaehlung[projekt_handlungsbereich]) {
-                const projekt_themenfeld = projekt[1]['Themenfeld'] as string;
-
-                // Den Umweg über `zuzuweisendes_themenfeld` muss wegen inkonsistenter Groß- und Kleinschreibung
-                // im Monatsbericht gemacht werden
-                const themenfelder: string[] = Object.keys(
-                    projektauszaehlung[projekt_handlungsbereich]['Themenfelder']
-                );
-                const index = themenfelder.findIndex(
-                    (thema) => projekt_themenfeld.toLowerCase().trim() === thema.toLowerCase().trim()
-                );
-                const zuzuweisendes_themenfeld = themenfelder[index];
-
-                projektauszaehlung[projekt_handlungsbereich]['Themenfelder'][zuzuweisendes_themenfeld]?.push(
-                    projekt[0]
-                );
-                projektauszaehlung[projekt_handlungsbereich]['Projekte'].pop();
-            }
-
-            if (projekt_handlungsbereich in projektauszaehlung) projektliste = projektliste.slice(1);
-        });
-        projektauszaehlung['Rest'] = {
-            Projekte: projektliste,
-        };
-
-        let counter = 0;
-        for (const [name_hb, handlungsbereich] of Object.entries(projektauszaehlung)) {
-            counter += handlungsbereich?.['Projekte']?.length ?? 0;
-            if (handlungsbereich?.['Projekte']?.length === 0) {
-                let counter_thema = 0;
-                for (const themen of Object.values(handlungsbereich)) {
-                    for (const thema of Object.values(themen)) {
-                        counter += (thema as string[])?.length ?? 0;
-                        counter_thema += (thema as string[])?.length ?? 0;
-                    }
-                }
-                projektauszaehlung[name_hb]['themen_addiert'] = counter_thema;
-            }
-        }
-        projektauszaehlung['gesamt'] = counter;
-        setAuszaehlung(projektauszaehlung);
-    }, []);
-
-    const TabelleZaehlung = (
-        <table className="zaehlung">
-            <caption>
-                <span className="expand">Auswertung:&nbsp;</span>
-                Zählung
-            </caption>
-            <thead>
-                <tr>
-                    <th>Handlungsbereich</th>
-                    <th>Themenfeld</th>
-                    <th>Anzahl Projekte</th>
-                </tr>
-            </thead>
-            {Monatsbericht.handlungsbereiche.map((handlungsbereich) => (
-                <tbody key={handlungsbereich}>
-                    <tr className="handlungsbereich">
-                        <td>{handlungsbereich}</td>
-                        <td></td>
-                        <td className="anzahl">
-                            {auszaehlung[handlungsbereich]?.['Themenfelder'] === undefined &&
-                                auszaehlung[handlungsbereich]?.['Projekte'].length}
-                            {auszaehlung[handlungsbereich]?.['Themenfelder'] !== undefined &&
-                                auszaehlung[handlungsbereich]?.['themen_addiert']}
-                        </td>
-                    </tr>
-                    {auszaehlung[handlungsbereich]?.['Themenfelder'] !== undefined &&
-                        Array.from(Object.entries(auszaehlung[handlungsbereich]['Themenfelder'])).map((thema) => (
-                            <tr key={thema[0]}>
-                                <td className="thema-davon"></td>
-                                <td>{thema[0]}</td>
-                                <td className="anzahl">{(thema[1] as string[]).length}</td>
-                            </tr>
-                        ))}
-                    {auszaehlung[handlungsbereich]?.['Themenfelder'] !== undefined &&
-                        auszaehlung[handlungsbereich]?.['Projekte'].length > 0 && (
-                            <tr>
-                                <td className="thema-davon"></td>
-                                <td className="nicht-zuzuordnen">nicht zuzuordnen</td>
-                                <td>auszaehlung[handlungsbereich]?.['Projekte'].length</td>
-                            </tr>
-                        )}
-                </tbody>
-            ))}
-            <tfoot>
-                <tr>
-                    <td>Insgesamt</td>
-                    <td className="anzahl" colSpan={2}>
-                        {auszaehlung['gesamt']}
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
-    );
-
     return (
         <Container className="analyse">
             <h2>Auswertung des aktuellen Monatsberichts*</h2>
@@ -134,7 +15,8 @@ function Analyse(props: { monatsbericht: Monatsbericht }) {
                 Monatsbericht wird einfach durchgezählt.
             </p>
             <h3>Statistische Auswertungen</h3>
-            {auszaehlung && TabelleZaehlung}
+            <Zaehlung monatsbericht={props.monatsbericht} />
+            <Endende monatsbericht={props.monatsbericht} />
             <p>Mehr Auswertungen kommen vielleicht noch &#8230;</p>
             <Projektliste mode="Liste" monatsbericht={props.monatsbericht}>
                 Projektliste
