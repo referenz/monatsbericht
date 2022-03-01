@@ -152,15 +152,20 @@ function Projektliste(props: {
                                             curr_class += ' changed';
                                             output = (
                                                 <>
-                                                    <span className="wert-alt">
-                                                        {formatCurrency(
-                                                            props.monatsbericht_alt.get_projekt(
-                                                                projekt[0].value,
-                                                                cell.spalte
-                                                            ) as string
-                                                        )}
-                                                    </span>
-                                                    <br />
+                                                    {props.monatsbericht_alt.get_projekt(
+                                                        projekt[0].value,
+                                                        cell.spalte
+                                                    ) !== 0 && (
+                                                        <span className="wert-alt">
+                                                            {formatCurrency(
+                                                                props.monatsbericht_alt.get_projekt(
+                                                                    projekt[0].value,
+                                                                    cell.spalte
+                                                                ) as string
+                                                            )}
+                                                            <br />
+                                                        </span>
+                                                    )}
                                                     <span className="wert-neu">{formatCurrency(cell.value)}</span>
                                                 </>
                                             );
