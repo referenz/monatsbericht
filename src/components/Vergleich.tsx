@@ -69,13 +69,17 @@ function Vergleich(props: {
                     Abweichende Bezeichung von Trägername oder Projekttitel
                 </Projektliste>
             )}
+            {abweichung_bezeichnung && abweichung_bezeichnung.length === 0 && (
+                <p>Keine Veränderungen bei Trägernamen oder Projekttiteln</p>
+            )}
 
-            <h2 className="mt-5">Hinzugekommene oder entfernte Projekte*</h2>
-            <p className="text-muted small">
-                * Die Angaben zur Bewilligungszeit und Gesamtförderzeit und werden derzeit noch nicht ausgewertet
-            </p>
-            {abweichung_projektzahl && (
+            {abweichung_projektzahl && (abweichung_projektzahl[0].size > 0 || abweichung_projektzahl[1].size > 0) && (
                 <>
+                    <h2 className="mt-5">Hinzugekommene oder entfernte Projekte*</h2>
+                    <p className="text-muted small">
+                        * Die Angaben zur Bewilligungszeit und Gesamtförderzeit und werden derzeit noch nicht
+                        ausgewertet
+                    </p>
                     {abweichung_projektzahl[0].size > 0 && (
                         <Projektliste
                             monatsbericht={props.monatsbericht.current}
@@ -93,10 +97,10 @@ function Vergleich(props: {
                             Weggefallene Projekte
                         </Projektliste>
                     )}
-                    {abweichung_projektzahl[0].size === 0 && abweichung_projektzahl[1].size === 0 && (
-                        <p>Keine hinzugekommenen oder entfernten Projekte</p>
-                    )}
                 </>
+            )}
+            {abweichung_projektzahl && abweichung_projektzahl[0].size === 0 && abweichung_projektzahl[1].size === 0 && (
+                <p>Keine hinzugekommenen oder entfernten Projekte</p>
             )}
         </Container>
     );
