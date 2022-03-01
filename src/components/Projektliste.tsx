@@ -147,36 +147,45 @@ function Projektliste(props: {
                                         cell.spalte.startsWith('Zuwendung')
                                     ) {
                                         const changed = abweichendeFelder.get(projekt[0].value).includes(cell.spalte);
-                                        if (changed) curr_class += ' changed';
-                                        output = (
-                                            <>
-                                                <span className="wert-alt">
-                                                    {formatCurrency(
-                                                        props.monatsbericht_alt.get_projekt(
-                                                            projekt[0].value,
-                                                            cell.spalte
-                                                        ) as string
-                                                    )}
-                                                </span>
-                                                <br />
-                                                <span className="wert-neu">{formatCurrency(cell.value)}</span>
-                                            </>
-                                        );
+                                        if (!changed) output = formatCurrency(cell.value);
+                                        else {
+                                            curr_class += ' changed';
+                                            output = (
+                                                <>
+                                                    <span className="wert-alt">
+                                                        {formatCurrency(
+                                                            props.monatsbericht_alt.get_projekt(
+                                                                projekt[0].value,
+                                                                cell.spalte
+                                                            ) as string
+                                                        )}
+                                                    </span>
+                                                    <br />
+                                                    <span className="wert-neu">{formatCurrency(cell.value)}</span>
+                                                </>
+                                            );
+                                        }
                                     } else if (
                                         props.mode === 'Vergleich_Bezeichnung' &&
                                         (cell.spalte === 'Trägername' || cell.spalte === 'Projekttitel')
                                     ) {
                                         const changed = abweichendeFelder.get(projekt[0].value).includes(cell.spalte);
-                                        if (changed) curr_class += ' changed';
-                                        output = (
-                                            <>
-                                                <span className="wert-alt">
-                                                    {props.monatsbericht_alt.get_projekt(projekt[0].value, cell.spalte)}
-                                                </span>
-                                                <br />
-                                                <span className="wert-neu">{cell.value}</span>
-                                            </>
-                                        );
+                                        if (!changed) output = cell.value;
+                                        else {
+                                            curr_class += ' changed';
+                                            output = (
+                                                <>
+                                                    <span className="wert-alt">
+                                                        {props.monatsbericht_alt.get_projekt(
+                                                            projekt[0].value,
+                                                            cell.spalte
+                                                        )}
+                                                    </span>
+                                                    <br />
+                                                    <span className="wert-neu">{cell.value}</span>
+                                                </>
+                                            );
+                                        }
                                     } else output = cell.value;
 
                                     return (
