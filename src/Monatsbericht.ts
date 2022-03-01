@@ -139,26 +139,15 @@ class Monatsbericht {
     public get_projekte(options?: { ordered?: boolean; ohne_geendete?: boolean }) {
         const projektliste = new Map(this.projekte);
 
-        if (options?.ohne_geendete === true) {
+        if (options?.ohne_geendete === true)
             (this.get_geendete_projekte() as string[]).forEach((projektnr) => projektliste.delete(projektnr));
-        }
 
         if (options?.ordered === true) {
             const ordered: Map<string, string[]> = new Map();
-            Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => ordered.set(handlungsbereich, []));
-
             projektliste.forEach((_, projektnummer) => {
-                const handlungsbereich_aktuell = this.get_projekt(projektnummer, 'Handlungsbereich') as string;
-
-                const liste = ordered.get(handlungsbereich_aktuell);
+                const liste = ordered.get(this.get_projekt(projektnummer, 'Handlungsbereich') as string) ?? [];
                 liste.push(projektnummer);
-                ordered.delete(handlungsbereich_aktuell);
-                ordered.set(handlungsbereich_aktuell, liste);
-            });
-
-            const values = Array.from(ordered.entries());
-            values.forEach((value) => {
-                if (value[1].length === 0) ordered.delete(value[0]);
+                ordered.set(this.get_projekt(projektnummer, 'Handlungsbereich') as string, liste);
             });
 
             return ordered;
@@ -178,19 +167,14 @@ class Monatsbericht {
      */
     private ordne_nach_handlungsbereichen(projektliste: Map<string, string[]>): Map<string, Map<string, string[]>> {
         const ordered: Map<string, Map<string, string[]>> = new Map();
-        Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => ordered.set(handlungsbereich, new Map()));
-
-        ordered.forEach((liste, handlungsbereich) => {
-            projektliste.forEach((projekt, projektnr) => {
-                if (this.get_projekt(projektnr, 'Handlungsbereich') === handlungsbereich) liste.set(projektnr, projekt);
-            });
+        projektliste.forEach((projekt, projektnr) => {
+            if (ordered.has(this.get_projekt(projektnr, 'Handlungsbereich') as string)) {
+                const projekte = ordered.get(this.get_projekt(projektnr, 'Handlungsbereich') as string);
+                projekte.set(projektnr, projekt);
+                ordered.set(this.get_projekt(projektnr, 'Handlungsbereich') as string, projekte);
+            } else
+                ordered.set(this.get_projekt(projektnr, 'Handlungsbereich') as string, new Map([[projektnr, projekt]]));
         });
-
-        const values = Array.from(ordered.entries());
-        values.forEach((value) => {
-            if (value[1].size === 0) ordered.delete(value[0]);
-        });
-
         return ordered;
     }
 
@@ -230,23 +214,15 @@ class Monatsbericht {
      */
     private orderListe(projekte: string[], alt?: Monatsbericht) {
         const ordered: Map<string, string[]> = new Map();
-        Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => ordered.set(handlungsbereich, []));
-
         projekte.forEach((projekt) => {
             const handlungsbereich_aktuell =
                 alt === undefined
                     ? (this.get_projekt(projekt, 'Handlungsbereich') as string)
                     : (alt.get_projekt(projekt, 'Handlungsbereich') as string);
 
-            const liste = ordered.get(handlungsbereich_aktuell);
+            const liste = ordered.get(handlungsbereich_aktuell) ?? [];
             liste.push(projekt);
-            ordered.delete(handlungsbereich_aktuell);
             ordered.set(handlungsbereich_aktuell, liste);
-        });
-
-        const values = Array.from(ordered.entries());
-        values.forEach((value) => {
-            if (value[1].length === 0) ordered.delete(value[0]);
         });
 
         return ordered;
