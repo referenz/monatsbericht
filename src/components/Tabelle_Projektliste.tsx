@@ -35,7 +35,7 @@ function Projektliste(props: {
             ]);
         });
         setZuordnungen(() => new Map(hilfszuordnung));
-    }, []);
+    }, [props.mode]);
 
     // Daten befüllen
     const [projektliste, setProjektliste] = useState([]); // [Handlungsbereich[Projektnummer]]
@@ -66,7 +66,7 @@ function Projektliste(props: {
             setProjektliste(projekte);
             setAbweichendeFelder(new Map(abweichende));
         }
-    }, []);
+    }, [props.abweichende_daten, props.mode, props.monatsbericht, props.projekte]);
 
     const Tabellen = projektliste.map((handlungsbereich, i) => {
         if (zuordnungen === undefined) return null;

@@ -137,10 +137,11 @@ class Monatsbericht {
     }
 
     public get_projekte(options?: { ordered?: boolean; ohne_geendete?: boolean }) {
-        const projektliste = this.projekte;
+        const projektliste = new Map(this.projekte);
 
-        if (options?.ohne_geendete === true)
+        if (options?.ohne_geendete === true) {
             (this.get_geendete_projekte() as string[]).forEach((projektnr) => projektliste.delete(projektnr));
+        }
 
         if (options?.ordered === true) {
             const ordered: Map<string, string[]> = new Map();

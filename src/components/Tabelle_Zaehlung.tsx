@@ -64,7 +64,7 @@ function Zaehlung(props: { monatsbericht: Monatsbericht }) {
         }
         projektauszaehlung['gesamt'] = counter;
         setAuszaehlung(projektauszaehlung);
-    }, []);
+    }, [props.monatsbericht]);
 
     return (
         <table className="zaehlung">
