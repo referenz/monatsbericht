@@ -9,7 +9,7 @@ function Zaehlung(props: { monatsbericht: Monatsbericht }) {
         let projektliste = Array.from(props.monatsbericht.get_projekte({ ohne_geendete: true }) as Projektliste);
 
         const projektauszaehlung = {};
-        Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => {
+        Monatsbericht.handlungsbereiche.forEach((_, handlungsbereich) => {
             projektauszaehlung[handlungsbereich] = { Projekte: [] };
             const themenfelder = (Themenfelder[handlungsbereich] as string[]) ?? null;
             if (themenfelder) {
@@ -79,7 +79,7 @@ function Zaehlung(props: { monatsbericht: Monatsbericht }) {
                     <th>Anzahl Projekte</th>
                 </tr>
             </thead>
-            {Monatsbericht.handlungsbereiche.map((handlungsbereich) => (
+            {Array.from(Monatsbericht.handlungsbereiche.keys()).map((handlungsbereich) => (
                 <tbody key={handlungsbereich}>
                     <tr className="handlungsbereich">
                         <td>{handlungsbereich}</td>

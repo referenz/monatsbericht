@@ -5,19 +5,22 @@ export type Projektliste = Map<string, Record<string, string | number | string[]
 class Monatsbericht {
     static vergleichsfelder_zuwendungen = ['Zuwendung 2020', 'Zuwendung 2021', 'Zuwendung 2022', 'Zuwendung 2023'];
 
-    static handlungsbereiche = [
-        'Kommune',
-        'Land',
-        'Bund',
-        'Modellprojekte Demokratieförderung',
-        'Modellprojekte Vielfaltgestaltung',
-        'Modellprojekte Extremismusprävention',
-        'Modellprojekte Strafvollzug',
-        'Forschungsvorhaben',
-        'Wissenschaftliche Begleitung',
-        'Innovationsfonds',
-        'Begleitprojekte',
-    ];
+    /**
+     * Key = Name des Handlungsbereichs, Value = Array mit möglichen Namen der Tabellenblätter im Monatbericht
+     */
+    static handlungsbereiche: Map<string, string[]> = new Map([
+        ['Kommune', ['Partnerschaften K', 'Partnerschaften K ', 'Partnerschaften K  ']],
+        ['Land', ['Landesdemokratiezentren L']],
+        ['Bund', ['Kompetenzzentren B']],
+        ['Modellprojekte Demokratieförderung', ['Demokratieförderung D']],
+        ['Modellprojekte Vielfaltgestaltung', ['Vielfaltgestaltung V']],
+        ['Modellprojekte Extremismusprävention', ['Extremismusprävention E']],
+        ['Modellprojekte Strafvollzug', ['Strafvollzug S']],
+        ['Forschungsvorhaben', ['Forschungsvorhaben F']],
+        ['Wissenschaftliche Begleitung', ['Wissenschaftliche Begleitung W']],
+        ['Innovationsfonds', ['Innofonds']],
+        ['Begleitprojekte', ['Begleitprojekte U']],
+    ]);
 
     projekte: Projektliste;
     zuordnungen: Map<string, string>;
@@ -39,35 +42,19 @@ class Monatsbericht {
 
     /**
      * Weist den Handlungsbereichen jeweils ein passendes Tabellenblatt zu. Das Ergebnis geht in die
-     * Klassenvariable `zuordnungen`. Die interne Variable `blattnamen` enthält für jeden Handlungsbereich eine Liste
-     * möglicher passender Tabellenblattnamen.
+     * Klassenvariable `zuordnungen`.
      * @param workbook - Die von XLSX bereits eingelesene Excel-Datei
-     * @returns zuordnungen - Eine Map, die als Keys die Blattnamen und als Werte den jeweiligen Handlungsbereich enthält.
+     * @returns zuordnungen - Eine Map, die als Keys die Blattnamen und als Value den jeweiligen Handlungsbereich enthält.
      */
     private get_blattnamen_fuer_handlungsbereiche(workbook: WorkBook): Map<string, string> {
         const zuordnungen = new Map<string, string>();
 
-        const blattnamen: Record<string, string[]> = {
-            Kommune: ['Partnerschaften K', 'Partnerschaften K ', 'Partnerschaften K  '],
-            Land: ['Landesdemokratiezentren L'],
-            Bund: ['Kompetenzzentren B'],
-            'Modellprojekte Demokratieförderung': ['Demokratieförderung D'],
-            'Modellprojekte Vielfaltgestaltung': ['Vielfaltgestaltung V'],
-            'Modellprojekte Extremismusprävention': ['Extremismusprävention E'],
-            'Modellprojekte Strafvollzug': ['Strafvollzug S'],
-            Forschungsvorhaben: ['Forschungsvorhaben F'],
-            'Wissenschaftliche Begleitung': ['Wissenschaftliche Begleitung W'],
-            Innovationsfonds: ['Innofonds'],
-            Begleitprojekte: ['Begleitprojekte U'],
-        };
-
-        Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => {
-            blattnamen[handlungsbereich].forEach((blattname) => {
-                if (workbook.SheetNames.includes(blattname)) zuordnungen.set(blattname, handlungsbereich);
-            });
+        Monatsbericht.handlungsbereiche.forEach((blattnamen, handlungsbereich) => {
+            const match = workbook.SheetNames.find((sheet) => blattnamen.includes(sheet));
+            if (match) zuordnungen.set(match, handlungsbereich);
         });
 
-        const keine_treffer = Monatsbericht.handlungsbereiche.filter(
+        const keine_treffer = Array.from(Monatsbericht.handlungsbereiche.keys()).filter(
             (handlungsbereich) => !Array.from(zuordnungen.values()).includes(handlungsbereich)
         );
         keine_treffer.forEach((handlungsbereich) =>
@@ -145,7 +132,7 @@ class Monatsbericht {
         if (options?.ordered === true) {
             const ordered: Map<string, string[]> = new Map();
             projektliste.forEach((_, projektnummer) => {
-                const liste = ordered.get(this.get_projekt(projektnummer, 'Handlungsbereich') as string) ?? [];
+                const liste = ordered?.get(this.get_projekt(projektnummer, 'Handlungsbereich') as string) ?? [];
                 liste.push(projektnummer);
                 ordered.set(this.get_projekt(projektnummer, 'Handlungsbereich') as string, liste);
             });
@@ -157,11 +144,15 @@ class Monatsbericht {
 
     public get_projekt(projektnr: string, feld?: string) {
         if (feld === undefined) return this.projekte.get(projektnr);
-        else return this.projekte.get(projektnr)[feld];
+        else
+            return process.env.NODE_ENV === 'development'
+                ? this.projekte.get(projektnr)[feld]
+                : this.projekte.get(projektnr)?.[feld];
     }
 
     /**
-     * Ordnet eine übergebene Projektliste nach Handlungsbereichen
+     * Ordnet eine übergebene Projektliste nach Handlungsbereichen. Wird nur von der Methode `abweichung_projektdaten()`
+     * genutzt.
      * @param projektliste
      * @returns Map mit den Handlungsbereichen als Schlüssel und einem Array mit Projekten als jeweiligem Value
      */
@@ -192,7 +183,7 @@ class Monatsbericht {
         this.projekte.forEach((projektdaten, projektnr) => {
             const abweichende_felder: string[] = [];
             vergleichsfelder.forEach((feld) => {
-                if (projekte_alt?.has(projektnr) && projektdaten[feld] !== projekte_alt.get(projektnr)?.[feld])
+                if (projekte_alt.has(projektnr) && projektdaten[feld] !== projekte_alt.get(projektnr)?.[feld])
                     abweichende_felder.push(feld);
             });
 
@@ -205,8 +196,8 @@ class Monatsbericht {
     }
 
     /**
-     * Hilfsfunktion für die öffentliche Funktion `abweichung_projektzahl()`, die die gefundenen Projekt nach
-     * Handlungsbereichen sortiert.
+     * Hilfsfunktion für die öffentlichen Funktionn `abweichung_projektzahl()` und `get_geendete_projekte()`,
+     * die die gefundenen Projekt nach Handlungsbereichen sortiert.
      * TODO: Umbenennen in ordne_nach_handlungsbereichen
      * @param projekte Array mit den Projektnummern
      * @param alt Optional: Object der Klasse `Monatsbericht` mit dem alten Monatsbericht
@@ -220,7 +211,7 @@ class Monatsbericht {
                     ? (this.get_projekt(projekt, 'Handlungsbereich') as string)
                     : (alt.get_projekt(projekt, 'Handlungsbereich') as string);
 
-            const liste = ordered.get(handlungsbereich_aktuell) ?? [];
+            const liste = ordered?.get(handlungsbereich_aktuell) ?? [];
             liste.push(projekt);
             ordered.set(handlungsbereich_aktuell, liste);
         });

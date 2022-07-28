@@ -6,9 +6,9 @@ function Geendete(props: { monatsbericht: Monatsbericht }) {
 
     const columns = ['Projektnr.', 'Trägername', 'Projekttitel', 'Handlungsbereich', 'Projektlaufzeit'];
 
-    const rows = geendete_projekte.map((projektnr) => {
-        return columns.map((spalte) => props.monatsbericht.get_projekt(projektnr, spalte));
-    });
+    const rows = geendete_projekte.map((projektnr) =>
+        columns.map((spalte) => props.monatsbericht.get_projekt(projektnr, spalte))
+    );
 
     return (
         <table className="endende">
@@ -27,10 +27,10 @@ function Geendete(props: { monatsbericht: Monatsbericht }) {
             <tbody>
                 {rows.map((projekt) => (
                     <tr key={projekt[0] as string}>
-                        <td>{projekt[0]}</td>
-                        <td>{projekt[1]}</td>
-                        <td>{projekt[2]}</td>
-                        <td>{projekt[3]}</td>
+                        <td>{projekt[0] as string}</td>
+                        <td>{projekt[1] as string}</td>
+                        <td>{projekt[2] as string}</td>
+                        <td>{projekt[3] as string}</td>
                         <td>
                             {projekt[4][0]} - {projekt[4][1]}
                         </td>

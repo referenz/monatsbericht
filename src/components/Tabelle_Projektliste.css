@@ -54,6 +54,10 @@ table.projektliste td.changed span.wert-neu{
     background-color: yellow;
 }
 
+table:not(.collapsed) caption span.projektzahl {
+    display: none;
+}
+
 .collapse-link button {
     background-color: inherit;
     border: 0;

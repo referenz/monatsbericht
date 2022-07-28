@@ -1,4 +1,4 @@
-import { createRef, ReactFragment, SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { ReactNode, createRef, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import './Tabelle_Projektliste.css';
 import Monatsbericht from '../Monatsbericht';
 import Infofelder from '../infofelder.json';
@@ -16,18 +16,17 @@ function Projektliste(props: {
     monatsbericht_alt?: Monatsbericht;
     abweichende_daten?: [string, Map<string, string[]>][]; // [Handlungsbereich[Map<projektnummer, abweichende]]
     tabellen_headline_h2?: boolean;
-    children?;
+    children?: ReactNode;
 }) {
     const caption = useRef([]);
 
     // Zuordnung: Welches Handlungsfeld kriegt welche Spalten angezeigt
     const [zuordnungen, setZuordnungen] = useState<Map<string, string[]>>();
     useEffect(() => {
-        let zuwendungsfelder = [];
-        if (props.mode === 'Vergleich_Zuwendung') zuwendungsfelder = Monatsbericht.vergleichsfelder_zuwendungen;
+        const zuwendungsfelder = props.mode === 'Vergleich_Zuwendung' ? Monatsbericht.vergleichsfelder_zuwendungen : [];
         const hilfszuordnung = new Map();
         const infofelder = new Map(Object.entries(Infofelder));
-        Monatsbericht.handlungsbereiche.forEach((handlungsbereich) => {
+        Monatsbericht.handlungsbereiche.forEach((_, handlungsbereich) => {
             hilfszuordnung.set(handlungsbereich, [
                 'Projektnr.',
                 ...(infofelder.has(handlungsbereich) ? infofelder.get(handlungsbereich) : infofelder.get('default')),
@@ -117,9 +116,12 @@ function Projektliste(props: {
                         <span className="caption-text">
                             {props.children && <span className="expand">{props.children}:&nbsp;</span>}
                             {handlungsbereich[0]}
+                            <span className="projektzahl"> ({rows.length})</span>
                         </span>
                         <span className="collapse-link">
-                            <button onClick={(e) => collapseTable(e)}>Einklappen</button>
+                            <button type="button" onClick={(e) => collapseTable(e)}>
+                                Einklappen
+                            </button>
                         </span>
                     </span>
                 </caption>
@@ -138,7 +140,7 @@ function Projektliste(props: {
                                     const key = `${cell.spalte}${cell.value}`;
                                     let curr_class = cell.spalte.replace(' ', '-').replace('.', '').toLowerCase();
 
-                                    let output: ReactFragment;
+                                    let output: ReactNode;
                                     if (cell.spalte === 'Bewilligungszeit' || cell.spalte === 'Projektlaufzeit') {
                                         if (cell.value !== undefined) output = `${cell.value[0]} - ${cell.value[1]}`;
                                         else output = '';
@@ -181,10 +183,12 @@ function Projektliste(props: {
                                             output = (
                                                 <>
                                                     <span className="wert-alt">
-                                                        {props.monatsbericht_alt.get_projekt(
-                                                            projekt[0].value,
-                                                            cell.spalte
-                                                        )}
+                                                        {
+                                                            props.monatsbericht_alt.get_projekt(
+                                                                projekt[0].value,
+                                                                cell.spalte
+                                                            ) as string
+                                                        }
                                                     </span>
                                                     <br />
                                                     <span className="wert-neu">{cell.value}</span>

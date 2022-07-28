@@ -53,7 +53,7 @@ table thead  {
 
 @supports (-moz-appearance:none) {
   table {
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); 
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   }
   table caption {
     position: static;
@@ -87,7 +87,7 @@ table :is(tbody, tfoot) tr {
 
 table.collapsing :is(tbody, tfoot) tr {
   opacity: 0;
-} 
+}
 
 table.collapsed :is(tbody, thead) tr {
   display: none;
