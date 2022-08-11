@@ -1,10 +1,25 @@
 {
-    "compilerOptions": {
-        "target": "es2021",
-        "allowSyntheticDefaultImports": true,
-        "moduleResolution": "node",
-        "jsx": "react-jsx",
-        "resolveJsonModule": true
-    },
-
+  "compilerOptions": {
+    "target": "es2021",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
+  },
+  "include": [
+    "src"
+  ]
 }

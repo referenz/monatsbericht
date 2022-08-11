@@ -74,7 +74,7 @@ class Monatsbericht {
             if ('Nr' in json_liste[zeile]) {
                 delete json_liste[zeile]['Nr'];
                 projekte.set((json_liste[zeile]['Projektnr.'] as string).replace(/\s/, '').trim(), json_liste[zeile]);
-                json_liste[zeile]['Handlungsbereich'] = this.zuordnungen.get(blattname);
+                json_liste[zeile]['Handlungsbereich'] = this.zuordnungen?.get(blattname);
 
                 // Eingelesene Daten aufräumen
                 json_liste[zeile]['Projektnr.'] = (json_liste[zeile]['Projektnr.'] as string).replace(/\s/, '').trim();
@@ -109,14 +109,13 @@ class Monatsbericht {
         const dateiname = 'buffer' in args ? args.dateiname : args.datei;
 
         this.zuordnungen = this.get_blattnamen_fuer_handlungsbereiche(workbook);
-        const blaetter = Array.from(this.zuordnungen.keys());
 
         const projekte: Projektliste = new Map();
-        blaetter.forEach((blatt) => {
+        for (const blatt of this.zuordnungen.keys()) {
             if (!workbook.SheetNames.includes(blatt))
                 console.log(`Tabellenblatt "${blatt}" nicht in Datei ${dateiname} enthalten`);
             else this.get_projekte_aus_blatt(blatt, workbook).forEach((value, key) => projekte.set(key, value));
-        });
+        }
 
         console.log(`${projekte.size} Projekte in Datei ${dateiname} gefunden`);
 
@@ -131,12 +130,12 @@ class Monatsbericht {
 
         if (options?.ordered === true) {
             const ordered: Map<string, string[]> = new Map();
-            projektliste.forEach((_, projektnummer) => {
+
+            for (const projektnummer of projektliste.keys()) {
                 const liste = ordered?.get(this.get_projekt(projektnummer, 'Handlungsbereich') as string) ?? [];
                 liste.push(projektnummer);
                 ordered.set(this.get_projekt(projektnummer, 'Handlungsbereich') as string, liste);
-            });
-
+            }
             return ordered;
         }
         return projektliste;

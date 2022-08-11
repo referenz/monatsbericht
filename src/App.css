@@ -21,6 +21,7 @@ table caption {
   font-weight: bold;
   color: black;
   background-color: #fff;
+  position: -webkit-sticky;
   position: sticky;
   padding-left: 0px;
   top: -1px;
@@ -45,6 +46,7 @@ table thead  {
   color: #ffffff;
   text-align: left;
 
+  position: -webkit-sticky;
   position: sticky;
   top: 2rem;
   z-index: 2;

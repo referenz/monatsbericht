@@ -1,22 +1,18 @@
 import { Container } from 'react-bootstrap';
-import './Analyse.css';
-import Zaehlung from './Tabelle_Zaehlung';
-import './Tabelle_Projektliste.css';
-import Geendete from './Tabelle_Geendete';
-import Projektliste from './Tabelle_Projektliste';
+import AnalyseZaehlung from './AnalyseZaehlung';
+import AnalyseGeendete from './AnalyseGeendete';
+import AnalyseProjektliste from './AnalyseProjektliste';
 import Monatsbericht from '../Monatsbericht';
 
 function Analyse(props: { monatsbericht: Monatsbericht }) {
     return (
         <Container className="analyse">
-            <h2>Auswertung des aktuellen Monatsberichts*</h2>
+            <h2>Auswertung des aktuellen Monatsberichts</h2>
             <h3>Statistische Auswertungen</h3>
-            <Zaehlung monatsbericht={props.monatsbericht} />
-            <Geendete monatsbericht={props.monatsbericht} />
+            <AnalyseZaehlung monatsbericht={props.monatsbericht} />
+            <AnalyseGeendete monatsbericht={props.monatsbericht} />
             <p>Mehr Auswertungen kommen vielleicht noch &#8230;</p>
-            <Projektliste mode="Liste" monatsbericht={props.monatsbericht}>
-                Projektliste
-            </Projektliste>
+            <AnalyseProjektliste monatsbericht={props.monatsbericht}>Projektliste</AnalyseProjektliste>
         </Container>
     );
 }

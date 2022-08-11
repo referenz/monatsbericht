@@ -1,5 +1,0 @@
-{
-    "Kommune": ["Trägername", "Fördergebiet", "Projektlaufzeit", "Bewilligungszeit"],
-    "Land": ["Trägername", "Bundesland", "Projektlaufzeit", "Bewilligungszeit"],
-    "default": ["Trägername", "Projekttitel", "Projektlaufzeit", "Bewilligungszeit"]
-}

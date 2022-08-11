@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
+import './AnalyseZaehlung.css';
 import Monatsbericht, { Projektliste } from '../Monatsbericht';
 import Themenfelder from '../themenfelder.json';
 
-function Zaehlung(props: { monatsbericht: Monatsbericht }) {
+function AnalyseZaehlung(props: { monatsbericht: Monatsbericht }) {
     const [auszaehlung, setAuszaehlung] = useState({});
 
     useEffect(() => {
         let projektliste = Array.from(props.monatsbericht.get_projekte({ ohne_geendete: true }) as Projektliste);
 
         const projektauszaehlung = {};
-        Monatsbericht.handlungsbereiche.forEach((_, handlungsbereich) => {
+        for (const handlungsbereich of Monatsbericht.handlungsbereiche.keys()) {
             projektauszaehlung[handlungsbereich] = { Projekte: [] };
             const themenfelder = (Themenfelder[handlungsbereich] as string[]) ?? null;
             if (themenfelder) {
@@ -17,7 +18,7 @@ function Zaehlung(props: { monatsbericht: Monatsbericht }) {
                 themenfelder.forEach((thema) => (themenobj[thema] = []));
                 projektauszaehlung[handlungsbereich]['Themenfelder'] = themenobj;
             }
-        });
+        }
 
         projektliste.forEach((projekt) => {
             const projekt_handlungsbereich = (projekt[1]['Handlungsbereich'] as string) ?? null;
@@ -74,9 +75,9 @@ function Zaehlung(props: { monatsbericht: Monatsbericht }) {
             </caption>
             <thead>
                 <tr>
-                    <th>Handlungsbereich</th>
-                    <th>Themenfeld</th>
-                    <th>Anzahl Projekte</th>
+                    <th scope="col">Handlungsbereich</th>
+                    <th scope="col">Themenfeld</th>
+                    <th scope="col">Anzahl Projekte</th>
                 </tr>
             </thead>
             {Array.from(Monatsbericht.handlungsbereiche.keys()).map((handlungsbereich) => (
@@ -121,4 +122,4 @@ function Zaehlung(props: { monatsbericht: Monatsbericht }) {
     );
 }
 
-export default Zaehlung;
+export default AnalyseZaehlung;
