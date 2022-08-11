@@ -1,5 +1,5 @@
 function cellClassName(column: string) {
-    return column.replace(' ', '-').replace('.', '').toLowerCase();
+    return column.replaceAll(' ', '-').replaceAll('.', '').toLowerCase();
 }
 
 export default cellClassName;
