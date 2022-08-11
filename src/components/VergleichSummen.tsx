@@ -7,11 +7,10 @@ import cellClassName from '../lib/cellClassName';
 import relevantColumns from '../lib/relevantColumns';
 
 function VergleichSummen(props: { monatsbericht_neu: Monatsbericht; monatsbericht_alt: Monatsbericht }) {
-    const abweichungFoerdersummen = props.monatsbericht_neu.abweichung_projektdaten(
+    const abweichungFoerdersummen = props.monatsbericht_neu.abweichung_projektdaten_nach_handlungsbereichen(
         props.monatsbericht_alt,
-        'Zuwendungen',
-        { ordered: true }
-    ) as Map<string, Map<string, string[]>>;
+        'Zuwendungen'
+    );
 
     const Tabellen = Array.from(abweichungFoerdersummen).map((handlungsbereich) => {
         const columns = relevantColumns(handlungsbereich[0], 'zuwendung');
@@ -20,7 +19,7 @@ function VergleichSummen(props: { monatsbericht_neu: Monatsbericht; monatsberich
         handlungsbereich[1].forEach((geaendert, projekt) => {
             const projektdaten: TableCell[] = [];
             columns.forEach((column) => {
-                const data = props.monatsbericht_neu.get_projekt(projekt, column) as string;
+                const data = props.monatsbericht_neu.get_projekt_data(projekt, column) as string;
                 const changed = geaendert.includes(column);
 
                 let output: ReactNode;
@@ -30,7 +29,9 @@ function VergleichSummen(props: { monatsbericht_neu: Monatsbericht; monatsberich
                         output = (
                             <>
                                 <span className="wert-alt">
-                                    {formatCurrency(props.monatsbericht_alt.get_projekt(projekt, column) as string)}
+                                    {formatCurrency(
+                                        props.monatsbericht_alt.get_projekt_data(projekt, column) as string
+                                    )}
                                     <br />
                                 </span>
                                 <span className="wert-neu">{formatCurrency(data)}</span>

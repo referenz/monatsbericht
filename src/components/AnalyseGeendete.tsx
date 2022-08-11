@@ -1,13 +1,13 @@
 import Monatsbericht from '../Monatsbericht';
 
 function AnalyseGeendete(props: { monatsbericht: Monatsbericht }) {
-    const geendete_projekte = props.monatsbericht.get_geendete_projekte() as string[];
+    const geendete_projekte = props.monatsbericht.get_geendete_projekte();
     if (geendete_projekte.length === 0) return <p>Keine in diesem Jahr bisher geendeten Projekte gefunden</p>;
 
     const columns = ['Projektnr.', 'Trägername', 'Projekttitel', 'Handlungsbereich', 'Projektlaufzeit'];
 
     const rows = geendete_projekte.map((projektnr) =>
-        columns.map((spalte) => props.monatsbericht.get_projekt(projektnr, spalte))
+        columns.map((spalte) => props.monatsbericht.get_projekt_data(projektnr, spalte))
     );
 
     return (

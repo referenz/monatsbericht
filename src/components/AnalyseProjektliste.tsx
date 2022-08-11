@@ -12,8 +12,7 @@ function AnalyseProjektliste(props: {
     expandedHeadline?: string;
     children?: ReactNode;
 }) {
-    const projekte =
-        props.projekte ?? Array.from(props.monatsbericht.get_projekte({ ordered: true }) as Map<string, string[]>);
+    const projekte = props.projekte ?? Array.from(props.monatsbericht.get_handlungsbereiche_mit_projekten());
 
     const expandedHeadline = props.expandedHeadline ?? 'Projektliste';
 
@@ -24,7 +23,7 @@ function AnalyseProjektliste(props: {
         handlungsbereich[1].forEach((projekt) => {
             const projektdaten: TableCell[] = [];
             columns.forEach((column) => {
-                const data = props.monatsbericht.get_projekt(projekt, column) as string | string[];
+                const data = props.monatsbericht.get_projekt_data(projekt, column) as string | string[];
                 let output = '';
                 if ((column === 'Bewilligungszeit' || column === 'Projektlaufzeit') && data !== undefined)
                     output = `${data[0]} - ${data[1]}`;

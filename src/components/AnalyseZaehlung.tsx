@@ -7,7 +7,7 @@ function AnalyseZaehlung(props: { monatsbericht: Monatsbericht }) {
     const [auszaehlung, setAuszaehlung] = useState<Record<string, any>>({});
 
     useEffect(() => {
-        let projektliste = Array.from(props.monatsbericht.get_projekte({ ohne_geendete: true }) as Projektliste);
+        let projektliste = Array.from(props.monatsbericht.get_projekte(true));
 
         const projektauszaehlung: Record<string, any> = {};
         for (const handlungsbereich of Monatsbericht.handlungsbereiche.keys()) {

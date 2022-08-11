@@ -5,11 +5,10 @@ import { ReactNode } from 'react';
 import cellClassName from '../lib/cellClassName';
 
 function VergleichBezeichnungen(props: { monatsbericht_neu: Monatsbericht; monatsbericht_alt: Monatsbericht }) {
-    const abweichungBezeichnungen = props.monatsbericht_neu.abweichung_projektdaten(
+    const abweichungBezeichnungen = props.monatsbericht_neu.abweichung_projektdaten_nach_handlungsbereichen(
         props.monatsbericht_alt,
-        'Bezeichnungen',
-        { ordered: true }
-    ) as Map<string, Map<string, string[]>>;
+        'Bezeichnungen'
+    );
 
     const Tabellen = Array.from(abweichungBezeichnungen).map((handlungsbereich) => {
         const columns = ['Projektnr.', 'Trägername', 'Projekttitel'];
@@ -18,7 +17,7 @@ function VergleichBezeichnungen(props: { monatsbericht_neu: Monatsbericht; monat
         handlungsbereich[1].forEach((geaendert, projekt) => {
             const projektdaten: TableCell[] = [];
             columns.forEach((column) => {
-                const data = props.monatsbericht_neu.get_projekt(projekt, column) as string;
+                const data = props.monatsbericht_neu.get_projekt_data(projekt, column) as string;
                 const changed = geaendert.includes(column);
 
                 let output: ReactNode;
@@ -26,7 +25,7 @@ function VergleichBezeichnungen(props: { monatsbericht_neu: Monatsbericht; monat
                     output = (
                         <>
                             <span className="wert-alt">
-                                {props.monatsbericht_alt.get_projekt(projekt, column) as string}
+                                {props.monatsbericht_alt.get_projekt_data(projekt, column) as string}
                                 <br />
                             </span>
                             <span className="wert-neu">{data}</span>

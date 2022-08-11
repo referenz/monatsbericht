@@ -2,9 +2,9 @@ import Monatsbericht from '../Monatsbericht';
 import AnalyseProjektliste from './AnalyseProjektliste';
 
 function VergleichProjektzahl(props: { monatsbericht_neu: Monatsbericht; monatsbericht_alt: Monatsbericht }) {
-    const abweichungProjektzahl = props.monatsbericht_neu.abweichung_projektzahl(props.monatsbericht_alt, {
-        ordered: true,
-    }) as [Map<string, string[]>, Map<string, string[]>];
+    const abweichungProjektzahl = props.monatsbericht_neu.abweichung_projektzahl_nach_handlungsbereichen(
+        props.monatsbericht_alt
+    );
 
     const TabellenHinzugekommen = (
         <AnalyseProjektliste

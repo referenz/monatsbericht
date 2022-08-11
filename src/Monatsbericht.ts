@@ -32,9 +32,11 @@ class Monatsbericht {
                 : this.get_projekte_aus_datei({ datei: args.datei });
     }
 
+    /*
     static fromFilename(datei: string) {
         return new Monatsbericht({ datei: datei });
     }
+    */
 
     static fromArrayBuffer(name: string, buffer: ArrayBuffer) {
         return new Monatsbericht({ buffer: [name, buffer] });
@@ -128,58 +130,38 @@ class Monatsbericht {
         return projekte;
     }
 
-    public get_projekte(options?: { ordered?: boolean; ohne_geendete?: boolean }) {
-        const projektliste = new Map(this.projekte);
+    public get_projekte(ohne_geendete = false) {
+        const projektliste: Projektliste = new Map(this.projekte);
 
-        if (options?.ohne_geendete === true)
-            (this.get_geendete_projekte() as string[]).forEach((projektnr) => projektliste.delete(projektnr));
+        if (ohne_geendete === true) this.get_geendete_projekte().forEach((projektnr) => projektliste.delete(projektnr));
 
-        if (options?.ordered === true) {
-            const ordered: Map<string, string[]> = new Map();
-
-            for (const projektnummer of projektliste.keys()) {
-                const liste = ordered?.get(this.get_projekt(projektnummer, 'Handlungsbereich') as string) ?? [];
-                liste.push(projektnummer);
-                ordered.set(this.get_projekt(projektnummer, 'Handlungsbereich') as string, liste);
-            }
-            return ordered;
-        }
         return projektliste;
     }
 
-    public get_projekt(projektnr: string, feld?: string) {
-        if (feld === undefined) return this.projekte.get(projektnr);
-        else return this.projekte.get(projektnr)?.[feld];
-    }
+    public get_handlungsbereiche_mit_projekten(ohne_geendete = false) {
+        const projektliste = this.get_projekte(ohne_geendete);
+        const ordered: Map<string, string[]> = new Map();
 
-    /**
-     * Ordnet eine übergebene Projektliste nach Handlungsbereichen. Wird nur von der Methode `abweichung_projektdaten()`
-     * genutzt.
-     * @param projektliste
-     * @returns Map mit den Handlungsbereichen als Schlüssel und einem Array mit Projekten als jeweiligem Value
-     */
-    private ordne_nach_handlungsbereichen(projektliste: Map<string, string[]>): Map<string, Map<string, string[]>> {
-        const ordered: Map<string, Map<string, string[]>> = new Map();
-        projektliste.forEach((projekt, projektnr) => {
-            if (ordered.has(this.get_projekt(projektnr, 'Handlungsbereich') as string)) {
-                const projekte = ordered.get(this.get_projekt(projektnr, 'Handlungsbereich') as string) as Map<
-                    string,
-                    string[]
-                >;
-                projekte.set(projektnr, projekt);
-                ordered.set(this.get_projekt(projektnr, 'Handlungsbereich') as string, projekte);
-            } else
-                ordered.set(this.get_projekt(projektnr, 'Handlungsbereich') as string, new Map([[projektnr, projekt]]));
-        });
+        for (const projektnummer of projektliste.keys()) {
+            const liste = ordered?.get(this.get_projekt_data(projektnummer, 'Handlungsbereich') as string) ?? [];
+            liste.push(projektnummer);
+            ordered.set(this.get_projekt_data(projektnummer, 'Handlungsbereich') as string, liste);
+        }
         return ordered;
     }
 
-    public abweichung_projektdaten(
-        alt: Monatsbericht,
-        vergleich: 'Zuwendungen' | 'Bezeichnungen',
-        options?: { ordered?: boolean }
-    ): Map<string, string[]> | Map<string, Map<string, string[]>> {
-        const projekte_alt = alt.get_projekte() as Map<string, Record<string, string | number | string[]>>;
+    /*
+    public get_projekt(projektnr: string, feld?: string) {
+        return this.projekte.get(projektnr);
+    }
+    */
+
+    public get_projekt_data(projektnr: string, feld: string) {
+        return this.projekte.get(projektnr)?.[feld];
+    }
+
+    private abweichung_projektdaten(alt: Monatsbericht, vergleich: 'Zuwendungen' | 'Bezeichnungen') {
+        const projekte_alt = alt.get_projekte();
         const projekte_abweichende: Map<string, string[]> = new Map();
 
         const vergleichsfelder =
@@ -195,9 +177,36 @@ class Monatsbericht {
             if (abweichende_felder.length > 0) projekte_abweichende.set(projektnr, abweichende_felder);
         });
 
-        return options?.ordered === true
-            ? this.ordne_nach_handlungsbereichen(projekte_abweichende)
-            : projekte_abweichende;
+        return projekte_abweichende;
+    }
+
+    /**
+     * Ordnet eine übergebene Projektliste nach Handlungsbereichen. Wird nur von der Methode `abweichung_projektdaten()`
+     * genutzt.
+     * @param projektliste
+     * @returns Map mit den Handlungsbereichen als Schlüssel und einem Array mit Projekten als jeweiligem Value
+     */
+    public abweichung_projektdaten_nach_handlungsbereichen(
+        alt: Monatsbericht,
+        vergleich: 'Zuwendungen' | 'Bezeichnungen'
+    ) {
+        const ordered: Map<string, Map<string, string[]>> = new Map();
+        const projektliste = this.abweichung_projektdaten(alt, vergleich);
+        projektliste.forEach((projekt, projektnr) => {
+            if (ordered.has(this.get_projekt_data(projektnr, 'Handlungsbereich') as string)) {
+                const projekte = ordered.get(this.get_projekt_data(projektnr, 'Handlungsbereich') as string) as Map<
+                    string,
+                    string[]
+                >;
+                projekte.set(projektnr, projekt);
+                ordered.set(this.get_projekt_data(projektnr, 'Handlungsbereich') as string, projekte);
+            } else
+                ordered.set(
+                    this.get_projekt_data(projektnr, 'Handlungsbereich') as string,
+                    new Map([[projektnr, projekt]])
+                );
+        });
+        return ordered;
     }
 
     /**
@@ -213,8 +222,8 @@ class Monatsbericht {
         projekte.forEach((projekt) => {
             const handlungsbereich_aktuell =
                 alt === undefined
-                    ? (this.get_projekt(projekt, 'Handlungsbereich') as string)
-                    : (alt.get_projekt(projekt, 'Handlungsbereich') as string);
+                    ? (this.get_projekt_data(projekt, 'Handlungsbereich') as string)
+                    : (alt.get_projekt_data(projekt, 'Handlungsbereich') as string);
 
             const liste = ordered?.get(handlungsbereich_aktuell) ?? [];
             liste.push(projekt);
@@ -224,23 +233,23 @@ class Monatsbericht {
         return ordered;
     }
 
-    public abweichung_projektzahl(
-        alt: Monatsbericht,
-        options?: { ordered?: boolean }
-    ): [string[], string[]] | [Map<string, string[]>, Map<string, string[]>] {
+    private abweichung_projektzahl(alt: Monatsbericht) {
         const projektliste_aktuell = Array.from(this.projekte.keys());
         const projektliste_alt = Array.from(alt.get_projekte().keys());
 
         const neue_projekte = projektliste_aktuell.filter((projekt) => !projektliste_alt.includes(projekt));
         const alte_projekte = projektliste_alt.filter((projekt) => !projektliste_aktuell.includes(projekt));
 
-        return options?.ordered === true
-            ? [this.orderListe(neue_projekte), this.orderListe(alte_projekte, alt)]
-            : [neue_projekte, alte_projekte];
+        return [neue_projekte, alte_projekte];
     }
 
-    public get_geendete_projekte(options?: { ordered?: boolean; zeitpunkt?: Date }) {
-        const enddatum_auswertung = options?.zeitpunkt ?? new Date();
+    public abweichung_projektzahl_nach_handlungsbereichen(alt: Monatsbericht) {
+        const abweichung = this.abweichung_projektzahl(alt);
+        return [this.orderListe(abweichung[0]), this.orderListe(abweichung[1])];
+    }
+
+    public get_geendete_projekte(zeitpunkt?: Date) {
+        const enddatum_auswertung = zeitpunkt ?? new Date();
         const endende_projekte: string[] = [];
 
         this.projekte.forEach((projektdaten, projektnummer) => {
@@ -251,8 +260,14 @@ class Monatsbericht {
             }
         });
 
-        return options?.ordered === true ? this.orderListe(endende_projekte) : endende_projekte;
+        return endende_projekte;
     }
+
+    /*
+    public get_geendete_projekte_nach_handlungsbereichen(zeitpunkt?: Date) {
+        return this.orderListe(this.get_geendete_projekte(zeitpunkt));
+    }
+    */
 }
 
 export default Monatsbericht;
