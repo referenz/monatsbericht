@@ -4,7 +4,7 @@ import Monatsbericht from '../Monatsbericht';
 import TabelleGeruest from './Tabelle_Geruest';
 import TableCell from '../types/TableCell';
 import cellClassName from '../lib/cellClassName';
-import tableColums from '../lib/tableColumns';
+import relevantColumns from '../lib/relevantColumns';
 
 function AnalyseProjektliste(props: {
     monatsbericht: Monatsbericht;
@@ -18,7 +18,7 @@ function AnalyseProjektliste(props: {
     const expandedHeadline = props.expandedHeadline ?? 'Projektliste';
 
     const Tabellen = projekte.map((handlungsbereich) => {
-        const columns = tableColums(handlungsbereich[0]);
+        const columns = relevantColumns(handlungsbereich[0]);
 
         const rows: TableCell[][] = [];
         handlungsbereich[1].forEach((projekt) => {

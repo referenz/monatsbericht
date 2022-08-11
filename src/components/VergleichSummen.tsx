@@ -4,7 +4,7 @@ import TableCell from '../types/TableCell';
 import { formatCurrency } from '../lib/formatCurrency';
 import { ReactNode } from 'react';
 import cellClassName from '../lib/cellClassName';
-import tableColums from '../lib/tableColumns';
+import relevantColumns from '../lib/relevantColumns';
 
 function VergleichSummen(props: { monatsbericht_neu: Monatsbericht; monatsbericht_alt: Monatsbericht }) {
     const abweichungFoerdersummen = props.monatsbericht_neu.abweichung_projektdaten(
@@ -14,7 +14,7 @@ function VergleichSummen(props: { monatsbericht_neu: Monatsbericht; monatsberich
     ) as Map<string, Map<string, string[]>>;
 
     const Tabellen = Array.from(abweichungFoerdersummen).map((handlungsbereich) => {
-        const columns = tableColums(handlungsbereich[0], 'zuwendung');
+        const columns = relevantColumns(handlungsbereich[0], 'zuwendung');
 
         const rows: TableCell[][] = [];
         handlungsbereich[1].forEach((geaendert, projekt) => {

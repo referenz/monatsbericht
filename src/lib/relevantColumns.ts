@@ -6,7 +6,7 @@ const infofelder = new Map([
     ['default', ['Trägername', 'Projekttitel', 'Projektlaufzeit', 'Bewilligungszeit']],
 ]);
 
-function tableColums(handlungsbereich: string, mode: 'default' | 'zuwendung' | 'bezeichnung' = 'default') {
+function relevantColumns(handlungsbereich: string, mode: 'default' | 'zuwendung' | 'bezeichnung' = 'default') {
     let columns = [
         'Projektnr.',
         ...(infofelder.has(handlungsbereich) ? infofelder.get(handlungsbereich) : infofelder.get('default')),
@@ -20,4 +20,4 @@ function tableColums(handlungsbereich: string, mode: 'default' | 'zuwendung' | '
     return columns;
 }
 
-export default tableColums;
+export default relevantColumns;
