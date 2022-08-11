@@ -10,7 +10,7 @@ function Footer() {
                     className="github"
                     rel="noopener noreferrer"
                     target="_blank"
-                    href="https://github.com/referenz/monatslisten-auswertung"
+                    href="https://github.com/referenz/monatsbericht"
                 >
                     Quellcode
                 </a>
