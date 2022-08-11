@@ -22,7 +22,7 @@ function AnalyseProjektliste(props: {
 
         const rows: TableCell[][] = [];
         handlungsbereich[1].forEach((projekt) => {
-            const projektdaten = [];
+            const projektdaten: TableCell[] = [];
             columns.forEach((column) => {
                 const data = props.monatsbericht.get_projekt(projekt, column) as string | string[];
                 let output = '';

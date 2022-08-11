@@ -9,7 +9,9 @@ const infofelder = new Map([
 function relevantColumns(handlungsbereich: string, mode: 'default' | 'zuwendung' | 'bezeichnung' = 'default') {
     let columns = [
         'Projektnr.',
-        ...(infofelder.has(handlungsbereich) ? infofelder.get(handlungsbereich) : infofelder.get('default')),
+        ...(infofelder.has(handlungsbereich)
+            ? (infofelder.get(handlungsbereich) as string[])
+            : (infofelder.get('default') as string[])),
     ];
 
     if (mode === 'zuwendung')

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, MutableRefObject } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Fade } from 'react-bootstrap';
 import './App.css';
@@ -14,12 +14,12 @@ import Monatsbericht from './Monatsbericht';
 function App() {
     const [globalState, setGlobalState] = useState<GlobalState>('INIT');
 
-    const datei_neu = useRef<FileBufferObj>();
-    const datei_alt = useRef<FileBufferObj>();
-    const monatsbericht = useRef<Monatsbericht>(null);
+    const datei_neu = useRef<FileBufferObj | null>(null);
+    const datei_alt = useRef<FileBufferObj | null>(null);
+    const monatsbericht = useRef<Monatsbericht>();
 
     useEffect(() => {
-        if (globalState === 'ONE_FILE') {
+        if (globalState === 'ONE_FILE' && datei_neu.current) {
             monatsbericht.current = Monatsbericht.fromArrayBuffer(datei_neu.current.name, datei_neu.current.buffer);
         }
     }, [globalState]);
@@ -34,7 +34,7 @@ function App() {
                         globalState={globalState}
                         setGlobalState={setGlobalState}
                         file="datei_neu"
-                        datei_neu={datei_neu}
+                        datei={datei_neu}
                     />
                 </Container>
             </Fade>
@@ -48,12 +48,16 @@ function App() {
                 }}
             >
                 <Container>
-                    <Prompt className="mt-4" setGlobalState={setGlobalState} datei={datei_neu.current} />
+                    <Prompt
+                        className="mt-4"
+                        setGlobalState={setGlobalState}
+                        datei={datei_neu.current as FileBufferObj}
+                    />
                 </Container>
             </Fade>
             <Fade in={globalState === 'ANALYSIS'} unmountOnExit={true} mountOnEnter={true}>
                 <Container>
-                    <Analyse monatsbericht={monatsbericht.current} />
+                    <Analyse monatsbericht={monatsbericht.current as Monatsbericht} />
                 </Container>
             </Fade>
             <Fade
@@ -68,13 +72,16 @@ function App() {
                         globalState={globalState}
                         setGlobalState={setGlobalState}
                         file="datei_alt"
-                        datei_alt={datei_alt}
+                        datei={datei_alt}
                     />
                 </Container>
             </Fade>
             <Fade in={globalState === 'COMPARE'} mountOnEnter={true} unmountOnExit={true}>
                 <Container>
-                    <Vergleich monatsbericht={monatsbericht} datei_alt={datei_alt} />
+                    <Vergleich
+                        monatsbericht={monatsbericht as MutableRefObject<Monatsbericht>}
+                        datei_alt={datei_alt as MutableRefObject<FileBufferObj>}
+                    />
                 </Container>
             </Fade>
         </>

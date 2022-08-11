@@ -34,7 +34,7 @@ function AnalyseGeendete(props: { monatsbericht: Monatsbericht }) {
                         <td>{projekt[2] as string}</td>
                         <td>{projekt[3] as string}</td>
                         <td>
-                            {projekt[4][0]} - {projekt[4][1]}
+                            {(projekt[4] as string[])[0]} - {(projekt[4] as string[])[1]}
                         </td>
                     </tr>
                 ))}

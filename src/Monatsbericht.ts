@@ -23,7 +23,7 @@ class Monatsbericht {
     ]);
 
     projekte: Projektliste;
-    zuordnungen: Map<string, string>;
+    zuordnungen: Map<string, string> = new Map();
 
     private constructor(args: { datei: string } | { buffer: [string, ArrayBuffer] }) {
         this.projekte =
@@ -74,7 +74,7 @@ class Monatsbericht {
             if ('Nr' in json_liste[zeile]) {
                 delete json_liste[zeile]['Nr'];
                 projekte.set((json_liste[zeile]['Projektnr.'] as string).replace(/\s/, '').trim(), json_liste[zeile]);
-                json_liste[zeile]['Handlungsbereich'] = this.zuordnungen?.get(blattname);
+                json_liste[zeile]['Handlungsbereich'] = this.zuordnungen?.get(blattname) ?? '';
 
                 // Eingelesene Daten aufräumen
                 json_liste[zeile]['Projektnr.'] = (json_liste[zeile]['Projektnr.'] as string).replace(/\s/, '').trim();
@@ -84,20 +84,26 @@ class Monatsbericht {
                 let gesuchte_spalte = Array.from(Object.keys(json_liste[zeile])).find((el) =>
                     el.startsWith('Projektbezeichnung')
                 );
-                json_liste[zeile]['Projekttitel'] = json_liste[zeile][gesuchte_spalte];
-                delete json_liste[zeile][gesuchte_spalte];
+                if (gesuchte_spalte) {
+                    json_liste[zeile]['Projekttitel'] = json_liste[zeile][gesuchte_spalte];
+                    delete json_liste[zeile][gesuchte_spalte];
+                }
 
                 gesuchte_spalte = Array.from(Object.keys(json_liste[zeile])).find((el) => el.startsWith('Projektlauf'));
-                let zeit = (json_liste[zeile][gesuchte_spalte] as string)?.match(/(\d\d\.\d\d\.\d\d\d\d)/gm);
-                json_liste[zeile]['Projektlaufzeit'] = zeit;
-                delete json_liste[zeile][gesuchte_spalte];
+                if (gesuchte_spalte) {
+                    const zeit = (json_liste[zeile][gesuchte_spalte] as string)?.match(/(\d\d\.\d\d\.\d\d\d\d)/gm);
+                    json_liste[zeile]['Projektlaufzeit'] = zeit ?? '';
+                    delete json_liste[zeile][gesuchte_spalte];
+                }
 
                 gesuchte_spalte = Array.from(Object.keys(json_liste[zeile])).find((el) =>
                     el.startsWith('Bewilligungs')
                 );
-                zeit = (json_liste[zeile][gesuchte_spalte] as string)?.match(/(\d\d\.\d\d\.\d\d\d\d)/gm);
-                json_liste[zeile]['Bewilligungszeit'] = zeit;
-                delete json_liste[zeile][gesuchte_spalte];
+                if (gesuchte_spalte) {
+                    const zeit = (json_liste[zeile][gesuchte_spalte] as string)?.match(/(\d\d\.\d\d\.\d\d\d\d)/gm);
+                    json_liste[zeile]['Bewilligungszeit'] = zeit ?? '';
+                    delete json_liste[zeile][gesuchte_spalte];
+                }
             }
 
         if (projekte.size === 0) console.log(`Keine Projekte in Tabellenblatt ${blattname} gefunden.`);
@@ -143,10 +149,7 @@ class Monatsbericht {
 
     public get_projekt(projektnr: string, feld?: string) {
         if (feld === undefined) return this.projekte.get(projektnr);
-        else
-            return process.env.NODE_ENV === 'development'
-                ? this.projekte.get(projektnr)[feld]
-                : this.projekte.get(projektnr)?.[feld];
+        else return this.projekte.get(projektnr)?.[feld];
     }
 
     /**
@@ -159,7 +162,10 @@ class Monatsbericht {
         const ordered: Map<string, Map<string, string[]>> = new Map();
         projektliste.forEach((projekt, projektnr) => {
             if (ordered.has(this.get_projekt(projektnr, 'Handlungsbereich') as string)) {
-                const projekte = ordered.get(this.get_projekt(projektnr, 'Handlungsbereich') as string);
+                const projekte = ordered.get(this.get_projekt(projektnr, 'Handlungsbereich') as string) as Map<
+                    string,
+                    string[]
+                >;
                 projekte.set(projektnr, projekt);
                 ordered.set(this.get_projekt(projektnr, 'Handlungsbereich') as string, projekte);
             } else
@@ -173,7 +179,7 @@ class Monatsbericht {
         vergleich: 'Zuwendungen' | 'Bezeichnungen',
         options?: { ordered?: boolean }
     ): Map<string, string[]> | Map<string, Map<string, string[]>> {
-        const projekte_alt = alt.get_projekte();
+        const projekte_alt = alt.get_projekte() as Map<string, Record<string, string | number | string[]>>;
         const projekte_abweichende: Map<string, string[]> = new Map();
 
         const vergleichsfelder =
@@ -238,8 +244,8 @@ class Monatsbericht {
         const endende_projekte: string[] = [];
 
         this.projekte.forEach((projektdaten, projektnummer) => {
-            if (projektdaten?.['Projektlaufzeit']?.[1] !== undefined) {
-                const [day, month, year] = projektdaten['Projektlaufzeit'][1].split('.');
+            if ((projektdaten?.['Projektlaufzeit'] as string[])?.[1] !== undefined) {
+                const [day, month, year] = (projektdaten['Projektlaufzeit'] as string)[1].split('.');
                 const enddatum_projekt = new Date(`${year}-${month}-${day}`);
                 if (enddatum_projekt.valueOf() < enddatum_auswertung.valueOf()) endende_projekte.push(projektnummer);
             }

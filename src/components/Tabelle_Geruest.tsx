@@ -5,7 +5,7 @@ function collapseTable(e: SyntheticEvent) {
     const button = e.target as HTMLButtonElement;
     button.innerText = (e.target as HTMLButtonElement).innerText === 'Einklappen' ? 'Ausklappen' : 'Einklappen';
 
-    const table = button.parentElement.parentElement.parentElement.parentElement as HTMLTableElement;
+    const table = button.parentElement?.parentElement?.parentElement?.parentElement as HTMLTableElement;
     if (table.classList.contains('collapsed')) table.classList.remove('collapsed');
     table.classList.toggle('collapsing');
     table.addEventListener('transitionend', () => {
@@ -19,7 +19,7 @@ function TabelleGeruest(props: {
     expandHeadline?: string;
     children?: ReactNode;
 }) {
-    const caption = useRef();
+    const caption = useRef<HTMLTableCaptionElement>(null);
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([e]) => e.target.classList.toggle('is-pinned', e.intersectionRatio < 1),
@@ -28,7 +28,7 @@ function TabelleGeruest(props: {
                 threshold: [1],
             }
         );
-        observer.observe(caption.current);
+        observer.observe(caption.current as Element);
     }, []);
 
     return (

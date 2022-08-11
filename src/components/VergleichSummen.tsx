@@ -18,7 +18,7 @@ function VergleichSummen(props: { monatsbericht_neu: Monatsbericht; monatsberich
 
         const rows: TableCell[][] = [];
         handlungsbereich[1].forEach((geaendert, projekt) => {
-            const projektdaten = [];
+            const projektdaten: TableCell[] = [];
             columns.forEach((column) => {
                 const data = props.monatsbericht_neu.get_projekt(projekt, column) as string;
                 const changed = geaendert.includes(column);

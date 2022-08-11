@@ -6,10 +6,9 @@ import FileBufferObj from '../types/FileBufferObj';
 
 function UploadForm(props: {
     globalState: GlobalState;
-    datei_neu?: React.MutableRefObject<FileBufferObj>;
+    datei: React.MutableRefObject<FileBufferObj | null>;
     setGlobalState: React.Dispatch<React.SetStateAction<GlobalState>>;
-    datei_alt?: React.MutableRefObject<FileBufferObj>;
-    file: string;
+    file: 'datei_neu' | 'datei_alt';
     className: string;
 }) {
     function dragover(e: SyntheticEvent) {
@@ -28,22 +27,25 @@ function UploadForm(props: {
     }
 
     function fs_input(e: SyntheticEvent) {
-        (e.target as HTMLInputElement).parentElement.classList.add('dragover');
-        (e.target as HTMLInputElement).parentElement.innerText = (e.target as HTMLInputElement).files[0].name;
+        const parentElement = (e.target as HTMLInputElement).parentElement;
+        if (parentElement) {
+            parentElement.classList.add('dragover');
+            parentElement.innerText = (e.target as HTMLInputElement).files?.[0].name ?? '';
+        }
 
-        submitFile((e.target as HTMLInputElement).files[0]);
+        submitFile((e.target as HTMLInputElement).files?.[0] as File);
     }
 
     async function submitFile(file: File) {
         if (props.globalState === 'INIT') {
-            props.datei_neu.current = {
+            props.datei.current = {
                 name: file.name,
                 buffer: await file.arrayBuffer(),
             };
             props.setGlobalState('ONE_FILE');
         }
         if (props.globalState === 'WAIT_FOR_SECOND') {
-            props.datei_alt.current = {
+            props.datei.current = {
                 name: file.name,
                 buffer: await file.arrayBuffer(),
             };

@@ -4,17 +4,17 @@ import Monatsbericht, { Projektliste } from '../Monatsbericht';
 import Themenfelder from '../themenfelder.json';
 
 function AnalyseZaehlung(props: { monatsbericht: Monatsbericht }) {
-    const [auszaehlung, setAuszaehlung] = useState({});
+    const [auszaehlung, setAuszaehlung] = useState<Record<string, any>>({});
 
     useEffect(() => {
         let projektliste = Array.from(props.monatsbericht.get_projekte({ ohne_geendete: true }) as Projektliste);
 
-        const projektauszaehlung = {};
+        const projektauszaehlung: Record<string, any> = {};
         for (const handlungsbereich of Monatsbericht.handlungsbereiche.keys()) {
             projektauszaehlung[handlungsbereich] = { Projekte: [] };
-            const themenfelder = (Themenfelder[handlungsbereich] as string[]) ?? null;
+            const themenfelder = Themenfelder[handlungsbereich as keyof typeof Themenfelder] ?? null;
             if (themenfelder) {
-                const themenobj = {};
+                const themenobj: Record<string, any> = {};
                 themenfelder.forEach((thema) => (themenobj[thema] = []));
                 projektauszaehlung[handlungsbereich]['Themenfelder'] = themenobj;
             }
@@ -55,7 +55,7 @@ function AnalyseZaehlung(props: { monatsbericht: Monatsbericht }) {
             if (handlungsbereich?.['Projekte']?.length === 0) {
                 let counter_thema = 0;
                 for (const themen of Object.values(handlungsbereich)) {
-                    for (const thema of Object.values(themen)) {
+                    for (const thema of Object.values(themen as string[][])) {
                         counter += (thema as string[])?.length ?? 0;
                         counter_thema += (thema as string[])?.length ?? 0;
                     }
