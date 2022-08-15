@@ -1,3 +1,4 @@
+import { env } from 'process';
 import { read, readFile, utils, WorkBook } from 'xlsx';
 
 export type Projektliste = Map<string, Record<string, string | number | string[]>>;
@@ -59,9 +60,10 @@ class Monatsbericht {
         const keine_treffer = Array.from(Monatsbericht.handlungsbereiche.keys()).filter(
             (handlungsbereich) => !Array.from(zuordnungen.values()).includes(handlungsbereich)
         );
-        keine_treffer.forEach((handlungsbereich) =>
-            console.log(`Kein passendes Tabellenblatt für den Handlungsbereich "${handlungsbereich}" gefunden)`)
-        );
+        keine_treffer.forEach((handlungsbereich) => {
+            if (env.NODE_ENV !== 'test')
+                console.log(`Kein passendes Tabellenblatt für den Handlungsbereich "${handlungsbereich}" gefunden)`);
+        });
 
         return zuordnungen;
     }
@@ -108,7 +110,8 @@ class Monatsbericht {
                 }
             }
 
-        if (projekte.size === 0) console.log(`Keine Projekte in Tabellenblatt ${blattname} gefunden.`);
+        if (projekte.size === 0 && env.NODE_ENV !== 'test')
+            console.log(`Keine Projekte in Tabellenblatt ${blattname} gefunden.`);
         return projekte;
     }
 
@@ -120,12 +123,12 @@ class Monatsbericht {
 
         const projekte: Projektliste = new Map();
         for (const blatt of this.zuordnungen.keys()) {
-            if (!workbook.SheetNames.includes(blatt))
+            if (!workbook.SheetNames.includes(blatt) && env.NODE_ENV !== 'test')
                 console.log(`Tabellenblatt "${blatt}" nicht in Datei ${dateiname} enthalten`);
             else this.get_projekte_aus_blatt(blatt, workbook).forEach((value, key) => projekte.set(key, value));
         }
 
-        console.log(`${projekte.size} Projekte in Datei ${dateiname} gefunden`);
+        if (env.NODE_ENV !== 'test') console.log(`${projekte.size} Projekte in Datei ${dateiname} gefunden`);
 
         return projekte;
     }
@@ -231,7 +234,7 @@ class Monatsbericht {
 
     public abweichung_projektzahl_nach_handlungsbereichen(alt: Monatsbericht) {
         const abweichung = this.abweichung_projektzahl(alt);
-        return [this.orderListe(abweichung[0]), this.orderListe(abweichung[1])];
+        return [this.orderListe(abweichung[0]), this.orderListe(abweichung[1], alt)];
     }
 
     public get_geendete_projekte(zeitpunkt?: Date) {
