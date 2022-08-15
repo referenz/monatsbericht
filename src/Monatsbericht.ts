@@ -180,12 +180,6 @@ class Monatsbericht {
         return projekte_abweichende;
     }
 
-    /**
-     * Ordnet eine übergebene Projektliste nach Handlungsbereichen. Wird nur von der Methode `abweichung_projektdaten()`
-     * genutzt.
-     * @param projektliste
-     * @returns Map mit den Handlungsbereichen als Schlüssel und einem Array mit Projekten als jeweiligem Value
-     */
     public abweichung_projektdaten_nach_handlungsbereichen(
         alt: Monatsbericht,
         vergleich: 'Zuwendungen' | 'Bezeichnungen'
@@ -193,24 +187,16 @@ class Monatsbericht {
         const ordered: Map<string, Map<string, string[]>> = new Map();
         const projektliste = this.abweichung_projektdaten(alt, vergleich);
         projektliste.forEach((projekt, projektnr) => {
-            if (ordered.has(this.get_projekt_data(projektnr, 'Handlungsbereich') as string)) {
-                const projekte = ordered.get(this.get_projekt_data(projektnr, 'Handlungsbereich') as string) as Map<
-                    string,
-                    string[]
-                >;
-                projekte.set(projektnr, projekt);
-                ordered.set(this.get_projekt_data(projektnr, 'Handlungsbereich') as string, projekte);
-            } else
-                ordered.set(
-                    this.get_projekt_data(projektnr, 'Handlungsbereich') as string,
-                    new Map([[projektnr, projekt]])
-                );
+            const projekte: Map<string, string[]> =
+                ordered?.get(this.get_projekt_data(projektnr, 'Handlungsbereich') as string) ?? new Map();
+            projekte.set(projektnr, projekt);
+            ordered.set(this.get_projekt_data(projektnr, 'Handlungsbereich') as string, projekte);
         });
         return ordered;
     }
 
     /**
-     * Hilfsfunktion für die öffentlichen Funktionn `abweichung_projektzahl()` und `get_geendete_projekte()`,
+     * Hilfsfunktion für die öffentlichen Funktionn `abweichung_projektzahl_*()` und `get_geendete_projekte_*()`,
      * die die gefundenen Projekt nach Handlungsbereichen sortiert.
      * TODO: Umbenennen in ordne_nach_handlungsbereichen
      * @param projekte Array mit den Projektnummern
@@ -225,7 +211,7 @@ class Monatsbericht {
                     ? (this.get_projekt_data(projekt, 'Handlungsbereich') as string)
                     : (alt.get_projekt_data(projekt, 'Handlungsbereich') as string);
 
-            const liste = ordered?.get(handlungsbereich_aktuell) ?? [];
+            const liste = ordered.get(handlungsbereich_aktuell) ?? [];
             liste.push(projekt);
             ordered.set(handlungsbereich_aktuell, liste);
         });
