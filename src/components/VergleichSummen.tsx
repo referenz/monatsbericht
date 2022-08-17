@@ -26,17 +26,18 @@ function VergleichSummen(props: { monatsbericht_neu: Monatsbericht; monatsberich
                 if (column.startsWith('Zuwendung')) {
                     if (!changed) output = formatCurrency(data);
                     else {
-                        output = (
-                            <>
-                                <span className="wert-alt">
-                                    {formatCurrency(
-                                        props.monatsbericht_alt.get_projekt_data(projekt, column) as string
-                                    )}
-                                    <br />
-                                </span>
-                                <span className="wert-neu">{formatCurrency(data)}</span>
-                            </>
-                        );
+                        const wert_alt = props.monatsbericht_alt.get_projekt_data(projekt, column) as string;
+                        if (wert_alt) {
+                            output = (
+                                <>
+                                    <span className="wert-alt">
+                                        {formatCurrency(wert_alt)}
+                                        <br />
+                                    </span>
+                                    <span className="wert-neu">{formatCurrency(data)}</span>
+                                </>
+                            );
+                        } else output = <span className="wert-neu">{formatCurrency(data)}</span>;
                     }
                 } else output = data;
 

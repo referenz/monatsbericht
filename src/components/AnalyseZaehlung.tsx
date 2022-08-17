@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './AnalyseZaehlung.css';
-import Monatsbericht, { Projektliste } from '../Monatsbericht';
+import Monatsbericht from '../Monatsbericht';
 import Themenfelder from '../themenfelder.json';
 
 function AnalyseZaehlung(props: { monatsbericht: Monatsbericht }) {
