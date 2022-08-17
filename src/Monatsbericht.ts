@@ -1,5 +1,5 @@
 import { env } from 'process';
-import { read, readFile, utils, WorkBook } from 'xlsx';
+import { read, utils, WorkBook } from 'xlsx';
 
 export type Projektliste = Map<string, Record<string, string | number | string[]>>;
 
@@ -26,17 +26,12 @@ class Monatsbericht {
     projekte: Projektliste;
     zuordnungen: Map<string, string> = new Map();
 
-    private constructor(args: { datei: string } | { buffer: [string, ArrayBuffer] }) {
-        this.projekte =
-            'buffer' in args
-                ? this.get_projekte_aus_datei({ dateiname: args.buffer[0], buffer: args.buffer[1] })
-                : this.get_projekte_aus_datei({ datei: args.datei });
+    private constructor(args: { buffer: [string, ArrayBuffer] }) {
+        this.projekte = this.get_projekte_aus_datei({ dateiname: args.buffer[0], buffer: args.buffer[1] });
     }
 
     /*
-    static fromFilename(datei: string) {
-        return new Monatsbericht({ datei: datei });
-    }
+    static fromFilename(datei) {}
     */
 
     static fromArrayBuffer(name: string, buffer: ArrayBuffer) {
@@ -115,9 +110,9 @@ class Monatsbericht {
         return projekte;
     }
 
-    private get_projekte_aus_datei(args: { dateiname: string; buffer: ArrayBuffer } | { datei: string }): Projektliste {
-        const workbook = 'buffer' in args ? read(args.buffer) : readFile(args.datei);
-        const dateiname = 'buffer' in args ? args.dateiname : args.datei;
+    private get_projekte_aus_datei(args: { dateiname: string; buffer: ArrayBuffer }): Projektliste {
+        const workbook = read(args.buffer);
+        const dateiname = args.dateiname;
 
         this.zuordnungen = this.get_blattnamen_fuer_handlungsbereiche(workbook);
 
