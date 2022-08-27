@@ -11,7 +11,7 @@
     padding: 12px;
 
     background-color: #FFFACD;
-    background-image: url(upload.svg);
+    background-image: url(../assets/upload.svg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: 50%;
@@ -33,7 +33,7 @@
         font-size: clamp(16px, 5vh, 40px);
     }
 }
-  
+
 @media (orientation: portrait) {
     .dropzone {
         width: 66vw; /* für die Abwärtskompatibilität */
