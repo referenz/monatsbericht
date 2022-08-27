@@ -22,29 +22,27 @@ function Footer() {
         const buttonImage = Logger.counter.error > 0 || Logger.counter.fatal > 0 ? xIcon : infoIcon;
 
         return (
-            <span>
-                <button type="button" title={buttonLabel} id="logButton" onClick={handleShow}>
-                    <Image src={buttonImage} alt={buttonLabel} />
-                </button>
-            </span>
+            <button type="button" title={buttonLabel} id="logButton" onClick={handleShow}>
+                <Image src={buttonImage} alt={buttonLabel} />
+            </button>
         );
     };
 
     return (
         <>
             <Container fluid className="fixed-bottom" id="footer">
-                <h1>Monatsberichtsauswertung</h1>
                 <span>
-                    <a
-                        className="github"
-                        rel="noopener noreferrer"
-                        target="_blank"
-                        href="https://github.com/referenz/monatsbericht"
-                    >
-                        Quellcode
-                    </a>{' '}
+                    <h1>Monatsberichtsauswertung</h1>
+                    <LogButton />
                 </span>
-                <LogButton />
+                <a
+                    className="github"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    href="https://github.com/referenz/monatsbericht"
+                >
+                    Quellcode
+                </a>
             </Container>
 
             <Offcanvas show={showLogs} onHide={handleClose} placement="bottom">

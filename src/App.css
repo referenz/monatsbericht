@@ -52,7 +52,7 @@ h3 {
   z-index: 2;
 
 }
-
+/* Firefox < 102 hat Probleme mit sticky caption */
 @supports (-moz-appearance:none) {
   #main table {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
