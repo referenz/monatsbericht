@@ -28,14 +28,14 @@ describe('Test der mit den Excel-Dateien arbeitenden Funktionen', () => {
 
     const monatsbericht = Monatsbericht.fromArrayBuffer('testdatei', datei);
 
-    test('Tabellenblätter werden richtigen Handlungsberichen zugeordnet', () => {
+    test('ordnet Tabellenblätter  den richtigen Handlungsberichen zu', () => {
         expect(monatsbericht.zuordnungen.size).toBe(2);
 
         expect(monatsbericht.zuordnungen.get('Partnerschaften K ')).toBe('Kommune');
         expect(monatsbericht.zuordnungen.get('Demokratieförderung D')).toBe('Modellprojekte Demokratieförderung');
     });
 
-    test('Projekte werden korrekt aus den Tabellenblättern extrahiert', () => {
+    test('extrahiert Projekte korrekt aus den Tabellenblättern', () => {
         expect(monatsbericht.projekte.size).toBe(2);
         expect(monatsbericht.projekte.get('01A01V')?.['Projekttitel']).toBe('Bremen für Vielfalt');
         expect((monatsbericht.projekte.get('01A01B')?.['Projektlaufzeit'] as string[])[1]).toBe('31.12.2024');
