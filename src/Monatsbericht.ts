@@ -1,5 +1,5 @@
-import { env } from 'process';
 import { read, utils, WorkBook } from 'xlsx';
+import Logger from './Logger';
 
 export type Projektliste = Map<string, Record<string, string | number | string[]>>;
 
@@ -49,15 +49,17 @@ class Monatsbericht {
 
         Monatsbericht.handlungsbereiche.forEach((blattnamen, handlungsbereich) => {
             const match = workbook.SheetNames.find((sheet) => blattnamen.includes(sheet));
-            if (match) zuordnungen.set(match, handlungsbereich);
+            if (match) {
+                zuordnungen.set(match, handlungsbereich);
+                Logger.debug(`Handlungsbereich "${handlungsbereich}" im Tabellenblatt "${match}" gefunden`);
+            }
         });
 
         const keine_treffer = Array.from(Monatsbericht.handlungsbereiche.keys()).filter(
             (handlungsbereich) => !Array.from(zuordnungen.values()).includes(handlungsbereich)
         );
         keine_treffer.forEach((handlungsbereich) => {
-            if (env.NODE_ENV !== 'test')
-                console.log(`Kein passendes Tabellenblatt für den Handlungsbereich "${handlungsbereich}" gefunden)`);
+            Logger.error(`Kein passendes Tabellenblatt für Handlungsbereich "${handlungsbereich}" gefunden)`);
         });
 
         return zuordnungen;
@@ -91,6 +93,8 @@ class Monatsbericht {
                 gesuchte_spalte = Array.from(Object.keys(json_liste[zeile])).find((el) => el.startsWith('Projektlauf'));
                 if (gesuchte_spalte) {
                     const zeit = (json_liste[zeile][gesuchte_spalte] as string)?.match(/(\d\d\.\d\d\.\d\d\d\d)/gm);
+                    if (!zeit)
+                        Logger.info(`Keine Projektlaufzeit bei Projekt ${json_liste[zeile]['Projektnr.']} angegeben`);
                     json_liste[zeile]['Projektlaufzeit'] = zeit ?? '';
                     delete json_liste[zeile][gesuchte_spalte];
                 }
@@ -100,13 +104,16 @@ class Monatsbericht {
                 );
                 if (gesuchte_spalte) {
                     const zeit = (json_liste[zeile][gesuchte_spalte] as string)?.match(/(\d\d\.\d\d\.\d\d\d\d)/gm);
+                    if (!zeit)
+                        Logger.info(
+                            `Kein Bewilligungszeitraum bei Projekt ${json_liste[zeile]['Projektnr.']} angegeben`
+                        );
                     json_liste[zeile]['Bewilligungszeit'] = zeit ?? '';
                     delete json_liste[zeile][gesuchte_spalte];
                 }
             }
 
-        if (projekte.size === 0 && env.NODE_ENV !== 'test')
-            console.log(`Keine Projekte in Tabellenblatt ${blattname} gefunden.`);
+        if (projekte.size === 0) Logger.error(`Keine Projekte in Tabellenblatt ${blattname} gefunden.`);
         return projekte;
     }
 
@@ -118,12 +125,12 @@ class Monatsbericht {
 
         const projekte: Projektliste = new Map();
         for (const blatt of this.zuordnungen.keys()) {
-            if (!workbook.SheetNames.includes(blatt) && env.NODE_ENV !== 'test')
-                console.log(`Tabellenblatt "${blatt}" nicht in Datei ${dateiname} enthalten`);
+            if (!workbook.SheetNames.includes(blatt))
+                Logger.error(`Tabellenblatt "${blatt}" nicht in Datei ${dateiname} enthalten`);
             else this.get_projekte_aus_blatt(blatt, workbook).forEach((value, key) => projekte.set(key, value));
         }
 
-        if (env.NODE_ENV !== 'test') console.log(`${projekte.size} Projekte in Datei ${dateiname} gefunden`);
+        Logger.info(`${projekte.size} Projekte in Datei ${dateiname} gefunden`);
 
         return projekte;
     }

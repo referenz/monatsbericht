@@ -27,63 +27,65 @@ function App() {
     return (
         <>
             <Footer /> {/* Footer steht oben, weil er h1-Element enthält */}
-            <Fade in={globalState === 'INIT'} unmountOnExit={true} onExited={() => setGlobalState('PROMPT')}>
-                <Container>
-                    <UploadForm
-                        className="mt-4"
-                        globalState={globalState}
-                        setGlobalState={setGlobalState}
-                        file="datei_neu"
-                        datei={datei_neu}
-                    />
-                </Container>
-            </Fade>
-            <Fade
-                in={globalState === 'PROMPT'}
-                unmountOnExit={true}
-                mountOnEnter={true}
-                onExited={() => {
-                    if (globalState === 'GO_FOR_SECOND') setGlobalState('WAIT_FOR_SECOND');
-                    if (globalState === 'GO_FOR_ANALYSIS') setGlobalState('ANALYSIS');
-                }}
-            >
-                <Container>
-                    <Prompt
-                        className="mt-4"
-                        setGlobalState={setGlobalState}
-                        datei={datei_neu.current as FileBufferObj}
-                    />
-                </Container>
-            </Fade>
-            <Fade in={globalState === 'ANALYSIS'} unmountOnExit={true} mountOnEnter={true}>
-                <Container>
-                    <Analyse monatsbericht={monatsbericht.current as Monatsbericht} />
-                </Container>
-            </Fade>
-            <Fade
-                in={globalState === 'WAIT_FOR_SECOND'}
-                unmountOnExit={true}
-                mountOnEnter={true}
-                onExited={() => setGlobalState('COMPARE')}
-            >
-                <Container>
-                    <UploadForm
-                        className="mt-4"
-                        globalState={globalState}
-                        setGlobalState={setGlobalState}
-                        file="datei_alt"
-                        datei={datei_alt}
-                    />
-                </Container>
-            </Fade>
-            <Fade in={globalState === 'COMPARE'} mountOnEnter={true} unmountOnExit={true}>
-                <Container>
-                    <Vergleich
-                        monatsbericht={monatsbericht as MutableRefObject<Monatsbericht>}
-                        datei_alt={datei_alt as MutableRefObject<FileBufferObj>}
-                    />
-                </Container>
-            </Fade>
+            <Container id="main">
+                <Fade in={globalState === 'INIT'} unmountOnExit={true} onExited={() => setGlobalState('PROMPT')}>
+                    <Container>
+                        <UploadForm
+                            className="mt-4"
+                            globalState={globalState}
+                            setGlobalState={setGlobalState}
+                            file="datei_neu"
+                            datei={datei_neu}
+                        />
+                    </Container>
+                </Fade>
+                <Fade
+                    in={globalState === 'PROMPT'}
+                    unmountOnExit={true}
+                    mountOnEnter={true}
+                    onExited={() => {
+                        if (globalState === 'GO_FOR_SECOND') setGlobalState('WAIT_FOR_SECOND');
+                        if (globalState === 'GO_FOR_ANALYSIS') setGlobalState('ANALYSIS');
+                    }}
+                >
+                    <Container>
+                        <Prompt
+                            className="mt-4"
+                            setGlobalState={setGlobalState}
+                            datei={datei_neu.current as FileBufferObj}
+                        />
+                    </Container>
+                </Fade>
+                <Fade in={globalState === 'ANALYSIS'} unmountOnExit={true} mountOnEnter={true}>
+                    <Container>
+                        <Analyse monatsbericht={monatsbericht.current as Monatsbericht} />
+                    </Container>
+                </Fade>
+                <Fade
+                    in={globalState === 'WAIT_FOR_SECOND'}
+                    unmountOnExit={true}
+                    mountOnEnter={true}
+                    onExited={() => setGlobalState('COMPARE')}
+                >
+                    <Container>
+                        <UploadForm
+                            className="mt-4"
+                            globalState={globalState}
+                            setGlobalState={setGlobalState}
+                            file="datei_alt"
+                            datei={datei_alt}
+                        />
+                    </Container>
+                </Fade>
+                <Fade in={globalState === 'COMPARE'} mountOnEnter={true} unmountOnExit={true}>
+                    <Container>
+                        <Vergleich
+                            monatsbericht={monatsbericht as MutableRefObject<Monatsbericht>}
+                            datei_alt={datei_alt as MutableRefObject<FileBufferObj>}
+                        />
+                    </Container>
+                </Fade>
+            </Container>
         </>
     );
 }

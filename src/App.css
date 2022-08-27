@@ -10,13 +10,13 @@ h3 {
   margin-top: 25px;
 }
 
-table {
+#main table {
   border-collapse: collapse;
   margin: 0 0 25px;
   min-width: 400px;
 }
 
-table caption {
+#main table caption {
   caption-side: top;
   font-weight: bold;
   color: black;
@@ -32,16 +32,16 @@ table caption {
   transform: color .5s linear;
 }
 
-table caption span.expand {
+#main table caption span.expand {
   font-size: 0;
   transition: font-size .4s ease-out;
 }
 
-table caption.is-pinned span.expand {
+#main table caption.is-pinned span.expand {
   font-size: 100%;
 }
 
-table thead  {
+#main table thead  {
   background-color: #009879;
   color: #ffffff;
   text-align: left;
@@ -54,70 +54,70 @@ table thead  {
 }
 
 @supports (-moz-appearance:none) {
-  table {
+  #main table {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   }
-  table caption {
+  #main table caption {
     position: static;
   }
 
-  table thead {
+  #main table thead {
     top: 0;
   }
 
-  table caption span.expand {
+  #main table caption span.expand {
     font-size: 100%;
     transition: none;
   }
 }
 
-table caption span.caption-flexbox {
+#main table caption span.caption-flexbox {
   display: inline-flex;
   justify-content: space-between;
   width: 100%;
 }
 
-table.collapsed caption {
+#main table.collapsed caption {
   background-color: #009879;
   color: #fff;
   padding-left: 5px;
 }
 
-table :is(tbody, tfoot) tr {
+#main table :is(tbody, tfoot) tr {
   transition: opacity .5s ease-in;
 }
 
-table.collapsing :is(tbody, tfoot) tr {
+#main table.collapsing :is(tbody, tfoot) tr {
   opacity: 0;
 }
 
-table.collapsed :is(tbody, thead) tr {
+#main table.collapsed :is(tbody, thead) tr {
   display: none;
 }
 
-table th,
-table td {
+#main table th,
+#main table td {
   font-size: 0.85rem;
   padding: 12px 15px;
 }
 
-table tbody tr, table tfoot tr {
+#main table tbody tr, table tfoot tr {
   border-bottom: 1px solid #dddddd;
 }
 
-table :is(tbody:only-of-type, tbody:last-of-type) tr:last-of-type {
+#main table :is(tbody:only-of-type, tbody:last-of-type) tr:last-of-type {
   border-bottom: 2px solid #009879;
 }
 
-table tbody tr:hover {
+#main table tbody tr:hover {
   background-color: #FAFAD2 !important;
 }
 
-table tfoot td {
+#main table tfoot td {
   font-weight: bold;
 }
 
-table tfoot tr {
+#main table  tfoot tr {
   border-bottom: 2px solid #009879;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 
