@@ -20,7 +20,7 @@ test('hängt Dezimalstellen an Werte ohne Dezialmalstellen an', () => {
 test('funktioniert mit Zahlen innerhalb der realistischen Spannbreite', () => {
     for (let i = 1; i < 100000000; i += 100000) {
         expect(formatCurrency(i.toString())).toBe(
-            `${i.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Euro`
+            `${i.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Euro`
         );
     }
 });
