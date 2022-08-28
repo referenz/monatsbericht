@@ -18,7 +18,11 @@ function Footer() {
     const LogButton = () => {
         if (!Logger.hasVisibleMsg) return null;
 
-        const buttonLabel = `${Logger.countVisibleMsgs()} Ereignismeldungen vorhanden`;
+        const buttonLabel = `
+            ${Logger.countVisibleMsgs()}
+            ${Logger.countVisibleMsgs() === 1 ? 'Ereignismeldung' : 'Ereignismeldungen'}
+            vorhanden
+        `;
         const buttonImage = Logger.counter.error > 0 || Logger.counter.fatal > 0 ? xIcon : infoIcon;
 
         return (
