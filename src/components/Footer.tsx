@@ -19,7 +19,7 @@ function Footer() {
         if (!Logger.hasVisibleMsg) return null;
 
         const buttonLabel =
-            Logger.countVisibleMsgs() +
+            (Logger.countVisibleMsgs() === 1 ? 'Eine' : Logger.countVisibleMsgs()) +
             ' ' +
             (Logger.countVisibleMsgs() === 1 ? 'Ereignismeldung' : 'Ereignismeldungen') +
             ' ' +
