@@ -59,7 +59,7 @@ class Monatsbericht {
             (handlungsbereich) => !Array.from(zuordnungen.values()).includes(handlungsbereich)
         );
         keine_treffer.forEach((handlungsbereich) => {
-            Logger.error(`Kein passendes Tabellenblatt für Handlungsbereich "${handlungsbereich}" gefunden)`);
+            Logger.error(`Kein passendes Tabellenblatt für Handlungsbereich "${handlungsbereich}" gefunden`);
         });
 
         return zuordnungen;
@@ -118,28 +118,31 @@ class Monatsbericht {
     }
 
     private get_projekte_aus_datei(args: { dateiname: string; buffer: ArrayBuffer }): Projektliste {
-        const workbook = read(args.buffer);
-        const dateiname = args.dateiname;
-
-        this.zuordnungen = this.get_blattnamen_fuer_handlungsbereiche(workbook);
-
         const projekte: Projektliste = new Map();
-        for (const blatt of this.zuordnungen.keys()) {
-            if (!workbook.SheetNames.includes(blatt))
-                Logger.error(`Tabellenblatt "${blatt}" nicht in Datei ${dateiname} enthalten`);
-            else this.get_projekte_aus_blatt(blatt, workbook).forEach((value, key) => projekte.set(key, value));
-        }
 
-        Logger.info(`${projekte.size} Projekte in Datei ${dateiname} gefunden`);
+        try {
+            const workbook = read(args.buffer);
+            this.zuordnungen = this.get_blattnamen_fuer_handlungsbereiche(workbook);
+
+            for (const blatt of this.zuordnungen.keys()) {
+                if (!workbook.SheetNames.includes(blatt))
+                    Logger.error(`Tabellenblatt "${blatt}" nicht in Datei ${args.dateiname} enthalten`);
+                else this.get_projekte_aus_blatt(blatt, workbook).forEach((value, key) => projekte.set(key, value));
+            }
+
+            if (projekte.size === 0) Logger.fatal(`Keine Projekte in Datei "${args.dateiname}" gefunden`);
+            else Logger.info(`${projekte.size} Projekte in Datei "${args.dateiname}" gefunden`);
+        } catch (e) {
+            // xlsx wirft Instanzen von Error deshalb kein Type Check notwendig
+            Logger.fatal(args.dateiname + ': ' + (e as Error).message);
+        }
 
         return projekte;
     }
 
     public get_projekte(ohne_geendete = false) {
         const projektliste: Projektliste = new Map(this.projekte);
-
         if (ohne_geendete === true) this.get_geendete_projekte().forEach((projektnr) => projektliste.delete(projektnr));
-
         return projektliste;
     }
 

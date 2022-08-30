@@ -35,7 +35,7 @@ function Footer() {
 
     return (
         <>
-            <Container fluid className="fixed-bottom" id="footer">
+            <Container as="footer" fluid className="fixed-bottom">
                 <span>
                     <h1>Monatsberichtsauswertung</h1>
                     <LogButton />

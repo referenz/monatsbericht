@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import App from './App';
 
 // Bug: https://github.com/react-bootstrap/react-bootstrap/issues/6426
+// nach Behebung dieses Bugs sollte der beforeAll-Workaround auch nicht mehr nötig sein
 
 /*
 beforeAll(() => {

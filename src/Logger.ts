@@ -36,6 +36,17 @@ const Logger = {
         return this.countVisibleMsgs() > 0;
     },
 
+    get hasFatalMsg() {
+        return this.counter.fatal > 0;
+    },
+
+    reset() {
+        for (const prop in this.counter) {
+            this.counter[prop as keyof typeof this.counter] = 0;
+        }
+        this.log = [];
+    },
+
     newEntry(level: level, msg: string) {
         const entry: Entry = {
             level: level,
