@@ -64,8 +64,6 @@ function AnalyseZaehlung(props: { monatsbericht: Monatsbericht }) {
         handlungsbereiche_mit_themen.set(handlungsbereich, obj);
     });
 
-    console.log(handlungsbereiche_mit_themen);
-
     return (
         <table className="zaehlung">
             <caption>
