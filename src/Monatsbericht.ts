@@ -23,11 +23,16 @@ class Monatsbericht {
         ['Begleitprojekte', ['Begleitprojekte U']],
     ]);
 
-    projekte: Projektliste;
+    projekte: Projektliste = new Map();
     zuordnungen: Map<string, string> = new Map();
 
     private constructor(args: { buffer: [string, ArrayBuffer] }) {
-        this.projekte = this.get_projekte_aus_datei({ dateiname: args.buffer[0], buffer: args.buffer[1] });
+        try {
+            this.projekte = this.get_projekte_aus_datei({ dateiname: args.buffer[0], buffer: args.buffer[1] });
+        } catch (e) {
+            // xlsx wirft Instanzen von Error deshalb kein Type Check notwendig
+            Logger.fatal(args.buffer[0] + ': ' + (e as Error).message);
+        }
     }
 
     /*
@@ -118,24 +123,17 @@ class Monatsbericht {
     }
 
     private get_projekte_aus_datei(args: { dateiname: string; buffer: ArrayBuffer }): Projektliste {
+        const workbook = read(args.buffer);
+        this.zuordnungen = this.get_blattnamen_fuer_handlungsbereiche(workbook);
         const projekte: Projektliste = new Map();
-
-        try {
-            const workbook = read(args.buffer);
-            this.zuordnungen = this.get_blattnamen_fuer_handlungsbereiche(workbook);
-
-            for (const blatt of this.zuordnungen.keys()) {
-                if (!workbook.SheetNames.includes(blatt))
-                    Logger.error(`Tabellenblatt "${blatt}" nicht in Datei ${args.dateiname} enthalten`);
-                else this.get_projekte_aus_blatt(blatt, workbook).forEach((value, key) => projekte.set(key, value));
-            }
-
-            if (projekte.size === 0) Logger.fatal(`Keine Projekte in Datei "${args.dateiname}" gefunden`);
-            else Logger.info(`${projekte.size} Projekte in Datei "${args.dateiname}" gefunden`);
-        } catch (e) {
-            // xlsx wirft Instanzen von Error deshalb kein Type Check notwendig
-            Logger.fatal(args.dateiname + ': ' + (e as Error).message);
+        for (const blatt of this.zuordnungen.keys()) {
+            if (!workbook.SheetNames.includes(blatt))
+                Logger.error(`Tabellenblatt "${blatt}" nicht in Datei ${args.dateiname} enthalten`);
+            else this.get_projekte_aus_blatt(blatt, workbook).forEach((value, key) => projekte.set(key, value));
         }
+
+        if (projekte.size === 0) Logger.fatal(`Keine Projekte in Datei "${args.dateiname}" gefunden`);
+        else Logger.info(`${projekte.size} Projekte in Datei "${args.dateiname}" gefunden`);
 
         return projekte;
     }
