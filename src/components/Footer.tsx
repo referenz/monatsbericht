@@ -36,10 +36,10 @@ function Footer() {
     return (
         <>
             <Container as="footer" fluid className="fixed-bottom">
-                <span>
+                <div>
                     <h1>Monatsberichtsauswertung</h1>
                     <LogButton />
-                </span>
+                </div>
                 <a
                     className="github"
                     rel="noopener noreferrer"
