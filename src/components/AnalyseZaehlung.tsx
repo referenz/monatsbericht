@@ -1,77 +1,76 @@
-import { useEffect, useState } from 'react';
 import './AnalyseZaehlung.css';
 import Monatsbericht from '../Monatsbericht';
 import Themenfelder from '../themenfelder.json';
 
+type hb_obj = {
+    __hat_Themenfelder: boolean;
+    Anzahl: number;
+    Themenfelder?: object;
+};
+
 function AnalyseZaehlung(props: { monatsbericht: Monatsbericht }) {
-    const [auszaehlung, setAuszaehlung] = useState<Record<string, any>>({});
+    const projektliste = props.monatsbericht.get_projekte(true);
 
-    useEffect(() => {
-        let projektliste = Array.from(props.monatsbericht.get_projekte(true));
+    const handlungsbereiche = new Map<string, string[]>();
+    projektliste.forEach((value, projektnr) => {
+        const curr_handlungsbereich = (value['Handlungsbereich'] as string) ?? '__Rest';
+        const curr_projekte = handlungsbereiche?.get(curr_handlungsbereich) ?? [];
+        curr_projekte.push(projektnr);
+        handlungsbereiche.set(curr_handlungsbereich, curr_projekte);
+    });
 
-        const projektauszaehlung: Record<string, any> = {};
-        for (const handlungsbereich of Monatsbericht.handlungsbereiche.keys()) {
-            projektauszaehlung[handlungsbereich] = { Projekte: [] };
-            const themenfelder = Themenfelder[handlungsbereich as keyof typeof Themenfelder] ?? null;
-            if (themenfelder) {
-                const themenobj: Record<string, any> = {};
-                themenfelder.forEach((thema) => (themenobj[thema] = []));
-                projektauszaehlung[handlungsbereich]['Themenfelder'] = themenobj;
-            }
+    const handlungsbereiche_mit_themen = new Map<string, hb_obj>();
+    handlungsbereiche.forEach((projekte, handlungsbereich) => {
+        const curr_themenfelder = Themenfelder[handlungsbereich as keyof typeof Themenfelder];
+
+        let obj: hb_obj;
+        if (!curr_themenfelder) {
+            obj = {
+                __hat_Themenfelder: false,
+                Anzahl: projekte.length,
+            };
+        } else {
+            const themenfelder = new Map<string, number>();
+            curr_themenfelder.forEach((themenfeld) => themenfelder.set(themenfeld, 0));
+
+            projekte.forEach((projekt) => {
+                // Der Umweg über Kopieren und Kleinschreibung muss wegen uneinheitlicher Schrweibweise im
+                // Monatsbericht gegangen werden. Ansonsten würde die unten auskommentierte Funktion reichen.
+                const themenfelder_array = Array.from(themenfelder.keys());
+                const index = themenfelder_array.findIndex(
+                    (thema) =>
+                        (props.monatsbericht.get_projekt_data(projekt, 'Themenfeld') as string).toLowerCase().trim() ===
+                        thema.toLowerCase().trim()
+                );
+                const curr_thema = themenfelder_array[index] ?? '__Rest';
+
+                /*
+                const curr_thema =
+                    themenfelder.has(props.monatsbericht.get_projekt_data(projekt, 'Themenfeld') as string)
+                        ? (props.monatsbericht.get_projekt_data(projekt, 'Themenfeld') as string)
+                        : ' __Rest';
+                */
+
+                const curr_anzahl = themenfelder?.get(curr_thema) ?? 0;
+                themenfelder.set(curr_thema, curr_anzahl + 1);
+            });
+
+            obj = {
+                __hat_Themenfelder: true,
+                Anzahl: projekte.length,
+                Themenfelder: themenfelder,
+            };
         }
+        handlungsbereiche_mit_themen.set(handlungsbereich, obj);
+    });
 
-        projektliste.forEach((projekt) => {
-            const projekt_handlungsbereich = (projekt[1]['Handlungsbereich'] as string) ?? null;
-            projektauszaehlung[projekt_handlungsbereich]['Projekte']?.push(projekt[0]);
-
-            if ('Themenfelder' in projektauszaehlung[projekt_handlungsbereich]) {
-                const projekt_themenfeld = projekt[1]['Themenfeld'] as string;
-
-                // Den Umweg über `zuzuweisendes_themenfeld` muss wegen inkonsistenter Groß- und Kleinschreibung
-                // im Monatsbericht gemacht werden
-                const themenfelder: string[] = Object.keys(
-                    projektauszaehlung[projekt_handlungsbereich]['Themenfelder']
-                );
-                const index = themenfelder.findIndex(
-                    (thema) => projekt_themenfeld.toLowerCase().trim() === thema.toLowerCase().trim()
-                );
-                const zuzuweisendes_themenfeld = themenfelder[index];
-
-                projektauszaehlung[projekt_handlungsbereich]['Themenfelder'][zuzuweisendes_themenfeld]?.push(
-                    projekt[0]
-                );
-                projektauszaehlung[projekt_handlungsbereich]['Projekte'].pop();
-            }
-
-            if (projekt_handlungsbereich in projektauszaehlung) projektliste = projektliste.slice(1);
-        });
-        projektauszaehlung['Rest'] = {
-            Projekte: projektliste,
-        };
-
-        let counter = 0;
-        for (const [name_hb, handlungsbereich] of Object.entries(projektauszaehlung)) {
-            counter += handlungsbereich?.['Projekte']?.length ?? 0;
-            if (handlungsbereich?.['Projekte']?.length === 0) {
-                let counter_thema = 0;
-                for (const themen of Object.values(handlungsbereich)) {
-                    for (const thema of Object.values(themen as string[][])) {
-                        counter += (thema as string[])?.length ?? 0;
-                        counter_thema += (thema as string[])?.length ?? 0;
-                    }
-                }
-                projektauszaehlung[name_hb]['themen_addiert'] = counter_thema;
-            }
-        }
-        projektauszaehlung['gesamt'] = counter;
-        setAuszaehlung(projektauszaehlung);
-    }, [props.monatsbericht]);
+    console.log(handlungsbereiche_mit_themen);
 
     return (
         <table className="zaehlung">
             <caption>
                 <span className="expand">Auswertung:&nbsp;</span>
-                Zählung
+                Zählung (ohne geendete)
             </caption>
             <thead>
                 <tr>
@@ -80,41 +79,30 @@ function AnalyseZaehlung(props: { monatsbericht: Monatsbericht }) {
                     <th scope="col">Anzahl Projekte</th>
                 </tr>
             </thead>
-            {Array.from(Monatsbericht.handlungsbereiche.keys()).map((handlungsbereich) => (
-                <tbody key={handlungsbereich}>
-                    <tr className="handlungsbereich">
-                        <td>{handlungsbereich}</td>
-                        <td></td>
-                        <td className="anzahl">
-                            {auszaehlung[handlungsbereich]?.['Themenfelder'] === undefined &&
-                                auszaehlung[handlungsbereich]?.['Projekte'].length}
-                            {auszaehlung[handlungsbereich]?.['Themenfelder'] !== undefined &&
-                                auszaehlung[handlungsbereich]?.['themen_addiert']}
-                        </td>
-                    </tr>
-                    {auszaehlung[handlungsbereich]?.['Themenfelder'] !== undefined &&
-                        Array.from(Object.entries(auszaehlung[handlungsbereich]['Themenfelder'])).map((thema) => (
-                            <tr key={thema[0]}>
-                                <td className="thema-davon"></td>
-                                <td>{thema[0]}</td>
-                                <td className="anzahl">{(thema[1] as string[]).length}</td>
-                            </tr>
-                        ))}
-                    {auszaehlung[handlungsbereich]?.['Themenfelder'] !== undefined &&
-                        auszaehlung[handlungsbereich]?.['Projekte'].length > 0 && (
-                            <tr>
-                                <td className="thema-davon"></td>
-                                <td className="nicht-zuzuordnen">nicht zuzuordnen</td>
-                                <td>auszaehlung[handlungsbereich]?.['Projekte'].length</td>
-                            </tr>
-                        )}
-                </tbody>
-            ))}
+            {Array.from(handlungsbereiche_mit_themen).map((handlungsbereich) => {
+                return (
+                    <tbody key={handlungsbereich[0]}>
+                        <tr className="handlungsbereich">
+                            <td>{handlungsbereich[0]}</td>
+                            <td></td>
+                            <td className="anzahl">{handlungsbereich[1]['Anzahl'] as number}</td>
+                        </tr>
+                        {handlungsbereich[1]['__hat_Themenfelder'] === true &&
+                            Array.from(handlungsbereich[1]['Themenfelder'] as Map<string, number>).map((themenfeld) => (
+                                <tr key={themenfeld[0]}>
+                                    <td className="thema-davon"></td>
+                                    <td>{themenfeld[0]}</td>
+                                    <td className="anzahl">{themenfeld[1]}</td>
+                                </tr>
+                            ))}
+                    </tbody>
+                );
+            })}
             <tfoot>
                 <tr>
                     <td>Insgesamt</td>
                     <td className="anzahl" colSpan={2}>
-                        {auszaehlung['gesamt']}
+                        {projektliste.size}
                     </td>
                 </tr>
             </tfoot>
