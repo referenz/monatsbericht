@@ -9,18 +9,8 @@ type hb_obj = {
 };
 
 function AnalyseZaehlung(props: { monatsbericht: Monatsbericht }) {
-    const projektliste = props.monatsbericht.get_projekte(true);
-
-    const handlungsbereiche = new Map<string, string[]>();
-    projektliste.forEach((value, projektnr) => {
-        const curr_handlungsbereich = (value['Handlungsbereich'] as string) ?? '__Rest';
-        const curr_projekte = handlungsbereiche?.get(curr_handlungsbereich) ?? [];
-        curr_projekte.push(projektnr);
-        handlungsbereiche.set(curr_handlungsbereich, curr_projekte);
-    });
-
     const handlungsbereiche_mit_themen = new Map<string, hb_obj>();
-    handlungsbereiche.forEach((projekte, handlungsbereich) => {
+    props.monatsbericht.get_handlungsbereiche_mit_projekten(true).forEach((projekte, handlungsbereich) => {
         const curr_themenfelder = Themenfelder[handlungsbereich as keyof typeof Themenfelder];
 
         let obj: hb_obj;
@@ -100,7 +90,7 @@ function AnalyseZaehlung(props: { monatsbericht: Monatsbericht }) {
                 <tr>
                     <td>Insgesamt</td>
                     <td className="anzahl" colSpan={2}>
-                        {projektliste.size}
+                        {props.monatsbericht.get_projekte(true).size}
                     </td>
                 </tr>
             </tfoot>
