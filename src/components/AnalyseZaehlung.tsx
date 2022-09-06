@@ -21,10 +21,8 @@ function AnalyseZaehlung(props: { monatsbericht: Monatsbericht }) {
             };
         } else {
             const themenfelder = new Map<string, number>();
-            curr_themenfelder.forEach((themenfeld) => themenfelder.set(themenfeld, 0));
-
             projekte.forEach((projekt) => {
-                // Der Umweg über Kopieren und Kleinschreibung muss wegen uneinheitlicher Schrweibweise im
+                // Der Umweg über Kopieren und Kleinschreibung muss wegen uneinheitlicher Schreibweise im
                 // Monatsbericht gegangen werden. Ansonsten würde die unten auskommentierte Funktion reichen.
                 const themenfelder_array = Array.from(themenfelder.keys());
                 const index = themenfelder_array.findIndex(

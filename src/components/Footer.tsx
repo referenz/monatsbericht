@@ -19,11 +19,9 @@ function Footer() {
         if (!Logger.hasVisibleMsg) return null;
 
         const buttonLabel =
-            (Logger.countVisibleMsgs() === 1 ? 'Eine' : Logger.countVisibleMsgs()) +
-            ' ' +
-            (Logger.countVisibleMsgs() === 1 ? 'Ereignismeldung' : 'Ereignismeldungen') +
-            ' ' +
-            'vorhanden';
+            (Logger.countVisibleMsgs() === 1
+                ? 'Eine Ereignismeldung '
+                : `${Logger.countVisibleMsgs()} Ereignismeldungen `) + 'vorhanden';
         const buttonImage = Logger.counter.error > 0 || Logger.counter.fatal > 0 ? xIcon : infoIcon;
 
         return (
