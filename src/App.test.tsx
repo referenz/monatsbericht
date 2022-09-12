@@ -22,7 +22,7 @@ beforeAll(() => {
 });
 */
 test.skip('rendert Startbildschirm', () => {
-    render(<App />);
-    const linkElement = screen.queryByText(/Aktuellen Monatsbericht auf dieses/i);
-    expect(linkElement).toBeInTheDocument();
+  render(<App />);
+  const linkElement = screen.queryByText(/Aktuellen Monatsbericht auf dieses/i);
+  expect(linkElement).toBeInTheDocument();
 });

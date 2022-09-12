@@ -1,6 +1,6 @@
 {
   "name": "monatsbericht-auswertung",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": ".",
   "private": true,
   "dependencies": {
@@ -19,11 +19,12 @@
     "react-scripts": "5.0.1",
     "typescript": "^4.7.4",
     "web-vitals": "^2.1.4",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "zustand": "^4.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && REACTBUILDVERSION=$(date +%Y-%m-%d)-$(date +%T) && sed -i -- 's/%REACTBUILDVERSION%/'$REACTBUILDVERSION'/g' build/index.html && echo React Build Version = $REACTBUILDVERSION",
+    "build": "react-scripts build && REACTBUILDVERSION=$(date +%Y-%m-%d)T$(date +%T) && sed -i -- 's/%REACTBUILDVERSION%/'$REACTBUILDVERSION'/g' build/index.html && echo React Build Version = $REACTBUILDVERSION",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
