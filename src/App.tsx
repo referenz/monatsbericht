@@ -16,13 +16,13 @@ import useGlobalStateStore from './service/globalStateStore';
 function App() {
   const { page, pageDone, mode, setMode, gotoPage } = useGlobalStateStore();
 
-  const datei_neu = useRef<FileBufferObj | null>(null);
-  const datei_alt = useRef<FileBufferObj | null>(null);
+  const dateiNeu = useRef<FileBufferObj | null>(null);
+  const dateiAlt = useRef<FileBufferObj | null>(null);
   const monatsbericht = useRef<Monatsbericht>();
 
   useEffect(() => {
-    if (page === 'INIT' && pageDone && datei_neu.current) {
-      monatsbericht.current = Monatsbericht.fromArrayBuffer(datei_neu.current.name, datei_neu.current.buffer);
+    if (page === 'INIT' && pageDone && dateiNeu.current) {
+      monatsbericht.current = Monatsbericht.fromArrayBuffer(dateiNeu.current.name, dateiNeu.current.buffer);
     }
   }, [page, pageDone]);
 
@@ -41,7 +41,7 @@ function App() {
           <>
             <Fade in={page === 'INIT' && !pageDone} unmountOnExit={true} onExited={() => gotoPage('PROMPT')}>
               <Container>
-                <UploadForm className="mt-4" file="datei_neu" datei={datei_neu} />
+                <UploadForm className="mt-4" file="datei_neu" datei={dateiNeu} />
               </Container>
             </Fade>
 
@@ -49,13 +49,10 @@ function App() {
               in={page === 'PROMPT' && !pageDone}
               unmountOnExit={true}
               mountOnEnter={true}
-              onExited={() => {
-                if (mode === 'ANALYZE_ONE') gotoPage('ANALYZE_ONE');
-                if (mode === 'COMPARE_TWO') gotoPage('INPUT_SECOND');
-              }}
+              onExited={() => gotoPage(mode === 'ANALYZE_ONE' ? 'ANALYZE_ONE' : 'INPUT_SECOND')}
             >
               <Container>
-                <Prompt className="mt-4" datei={datei_neu.current as FileBufferObj} />
+                <Prompt className="mt-4" datei={dateiNeu.current as FileBufferObj} />
               </Container>
             </Fade>
 
@@ -72,7 +69,7 @@ function App() {
               onExited={() => gotoPage('COMPARE_TWO')}
             >
               <Container>
-                <UploadForm className="mt-4" file="datei_alt" datei={datei_alt} />
+                <UploadForm className="mt-4" file="datei_alt" datei={dateiAlt} />
               </Container>
             </Fade>
 
@@ -80,7 +77,7 @@ function App() {
               <Container>
                 <Vergleich
                   monatsbericht={monatsbericht as MutableRefObject<Monatsbericht>}
-                  datei_alt={datei_alt as MutableRefObject<FileBufferObj>}
+                  dateiAlt={dateiAlt as MutableRefObject<FileBufferObj>}
                 />
               </Container>
             </Fade>

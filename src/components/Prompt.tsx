@@ -6,7 +6,7 @@ import './Prompt.css';
 function Prompt(props: { className?: string; datei: FileBufferObj }) {
   const { setPageDone, setMode } = useGlobalStateStore();
   return (
-    <Container className={props.className + ' prompt'}>
+    <Container className={(props.className as string) + ' prompt'}>
       <Row>
         <p>Datei &quot;{props.datei.name}&quot; wurde eingelesen.</p>
       </Row>

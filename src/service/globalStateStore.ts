@@ -5,13 +5,13 @@ type Mode = 'ANALYZE_ONE' | 'COMPARE_TWO';
 
 type GlobalStateHandler = {
   page: Page;
-  gotoPage(newPage: Page): void;
+  gotoPage: (newPage: Page) => void;
 
   pageDone: boolean;
-  setPageDone(): void;
+  setPageDone: () => void;
 
   mode?: Mode;
-  setMode(newMode: Mode | undefined): void;
+  setMode: (newMode: Mode | undefined) => void;
 };
 
 const useGlobalStateStore = create<GlobalStateHandler>(set => ({

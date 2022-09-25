@@ -9,7 +9,7 @@ function UploadForm(props: {
   file: 'datei_neu' | 'datei_alt';
   className: string;
 }) {
-  const { page, setPageDone } = useGlobalStateStore();
+  const { setPageDone } = useGlobalStateStore();
 
   function dragover(e: SyntheticEvent) {
     e.preventDefault();
@@ -23,34 +23,25 @@ function UploadForm(props: {
   function drop(e: DragEvent) {
     e.preventDefault();
     (e.target as HTMLLabelElement).innerText = e.dataTransfer.files[0].name;
-    submitFile(e.dataTransfer.files[0]);
+    void submitFile(e.dataTransfer.files[0]);
   }
 
-  function fs_input(e: SyntheticEvent) {
+  function fsInput(e: SyntheticEvent) {
     const parentElement = (e.target as HTMLInputElement).parentElement;
     if (parentElement) {
       parentElement.classList.add('dragover');
       parentElement.innerText = (e.target as HTMLInputElement).files?.[0].name ?? '';
     }
 
-    submitFile((e.target as HTMLInputElement).files?.[0] as File);
+    void submitFile((e.target as HTMLInputElement).files?.[0] as File);
   }
 
   async function submitFile(file: File) {
-    if (page === 'INIT') {
-      props.datei.current = {
-        name: file.name,
-        buffer: await file.arrayBuffer(),
-      };
-      setPageDone();
-    }
-    if (page === 'INPUT_SECOND') {
-      props.datei.current = {
-        name: file.name,
-        buffer: await file.arrayBuffer(),
-      };
-      setPageDone();
-    }
+    props.datei.current = {
+      name: file.name,
+      buffer: await file.arrayBuffer(),
+    };
+    setPageDone();
   }
 
   return (
@@ -72,7 +63,7 @@ function UploadForm(props: {
               Alten Monatsbericht zum Vergleichen auf dieses Feld ziehen <br /> oder hier klicken
             </>
           )}
-          <Form.Control type="file" onChange={e => fs_input(e)} />
+          <Form.Control type="file" onChange={e => fsInput(e)} />
         </Form.Label>
       </Form.Group>
     </Form>

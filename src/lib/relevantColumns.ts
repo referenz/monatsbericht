@@ -15,7 +15,7 @@ function relevantColumns(handlungsbereich: string, mode: 'default' | 'zuwendung'
   ];
 
   if (mode === 'zuwendung')
-    columns = [...columns, ...Monatsbericht.vergleichsfelder_zuwendungen].filter(
+    columns = [...columns, ...Monatsbericht.vergleichsfelderZuwendungen].filter(
       feld => feld !== 'Bewilligungszeit' && feld !== 'Projektlaufzeit'
     );
 

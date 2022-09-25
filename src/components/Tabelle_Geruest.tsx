@@ -62,9 +62,9 @@ function TabelleGeruest(props: {
         {props.rows.map(cells => {
           return (
             <tr key={cells[0].value as string}>
-              {cells.map(cell => {
+              {cells.map((cell, i) => {
                 return (
-                  <td className={cell.class} key={cell.class + cell.value}>
+                  <td className={cell.class} key={i}>
                     {cell.value}
                   </td>
                 );

@@ -1,16 +1,16 @@
-type level = 'debug' | 'info' | 'warn' | 'error' | 'fatal';
+type Level = 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
 type Entry = {
-  level: level;
+  level: Level;
   time: Date;
   message: string;
 };
 
-type ProductionLevels = Extract<level, 'fatal' | 'error' | 'warn' | 'info'>;
+type ProductionLevels = Extract<Level, 'fatal' | 'error' | 'warn' | 'info'>;
 const visibleInProduction: ProductionLevels[] = ['fatal', 'error', 'warn', 'info'];
-const visibleInDevelopment: Exclude<level, ProductionLevels>[] = ['debug'];
+const visibleInDevelopment: Exclude<Level, ProductionLevels>[] = ['debug'];
 
-export let visible: level[] = visibleInProduction;
+export let visible: Level[] = visibleInProduction;
 if (process.env.NODE_ENV === 'development') visible = [...visible, ...visibleInDevelopment];
 
 const Logger = {
@@ -26,7 +26,7 @@ const Logger = {
 
   countVisibleMsgs() {
     let visibleCounter = 0;
-    for (const level of ['debug', 'info', 'warn', 'error', 'fatal'] as level[]) {
+    for (const level of ['debug', 'info', 'warn', 'error', 'fatal'] as Level[]) {
       if (visible.includes(level)) visibleCounter += this.counter[level];
     }
     return visibleCounter;
@@ -47,7 +47,7 @@ const Logger = {
     this.log = [];
   },
 
-  newEntry(level: level, msg: string) {
+  newEntry(level: Level, msg: string) {
     const entry: Entry = {
       level: level,
       time: new Date(),

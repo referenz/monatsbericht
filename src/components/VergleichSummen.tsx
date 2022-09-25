@@ -6,9 +6,9 @@ import { ReactNode } from 'react';
 import cellClassName from '../lib/cellClassName';
 import relevantColumns from '../lib/relevantColumns';
 
-function VergleichSummen(props: { monatsbericht_neu: Monatsbericht; monatsbericht_alt: Monatsbericht }) {
-  const abweichungFoerdersummen = props.monatsbericht_neu.abweichung_projektdaten_nach_handlungsbereichen(
-    props.monatsbericht_alt,
+function VergleichSummen(props: { monatsberichtNeu: Monatsbericht; monatsberichtAlt: Monatsbericht }) {
+  const abweichungFoerdersummen = props.monatsberichtNeu.abweichungProjektdatenNachHandlungsbereichen(
+    props.monatsberichtAlt,
     'Zuwendungen'
   );
 
@@ -19,19 +19,19 @@ function VergleichSummen(props: { monatsbericht_neu: Monatsbericht; monatsberich
     handlungsbereich[1].forEach((geaendert, projekt) => {
       const projektdaten: TableCell[] = [];
       columns.forEach(column => {
-        const data = props.monatsbericht_neu.get_projekt_data(projekt, column) as string;
+        const data = props.monatsberichtNeu.getProjektData(projekt, column) as string;
         const changed = geaendert.includes(column);
 
         let output: ReactNode;
         if (column.startsWith('Zuwendung')) {
           if (!changed) output = formatCurrency(data);
           else {
-            const wert_alt = props.monatsbericht_alt.get_projekt_data(projekt, column) as string;
-            if (wert_alt) {
+            const wertAlt = props.monatsberichtAlt.getProjektData(projekt, column) as string;
+            if (wertAlt) {
               output = (
                 <>
                   <span className="wert-alt">
-                    {formatCurrency(wert_alt)}
+                    {formatCurrency(wertAlt)}
                     <br />
                   </span>
                   <span className="wert-neu">{formatCurrency(data)}</span>
@@ -41,12 +41,12 @@ function VergleichSummen(props: { monatsbericht_neu: Monatsbericht; monatsberich
           }
         } else output = data;
 
-        let cell_class = cellClassName(column);
-        if (changed) cell_class += ' changed';
+        let cellClass = cellClassName(column);
+        if (changed) cellClass += ' changed';
 
         const cell: TableCell = {
           column: column,
-          class: cell_class,
+          class: cellClass,
           value: output,
         };
         projektdaten.push(cell);

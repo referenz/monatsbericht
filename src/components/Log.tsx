@@ -17,11 +17,8 @@ function Log() {
           .filter(entry => visible.includes(entry.level))
           .reverse()
           .map((entry, i) => {
-            let classname = '';
-            if (entry.level === 'error' || entry.level === 'fatal') classname += 'error';
-            if (entry.level === 'debug') classname += 'debug';
             return (
-              <tr className={classname} key={i}>
+              <tr className={entry.level} key={i}>
                 <td>
                   {entry.time.toLocaleDateString('de-DE', {
                     day: '2-digit',

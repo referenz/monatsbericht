@@ -17,7 +17,7 @@ test('Handlungsbereich Kommune, Modus Zuwendug', () => {
     'Projektnr.',
     'Trägername',
     'Fördergebiet',
-    ...Monatsbericht.vergleichsfelder_zuwendungen,
+    ...Monatsbericht.vergleichsfelderZuwendungen,
   ]);
   expect(relevantColumns('Kommune')).not.toContain('Projekttitel');
 });
@@ -38,7 +38,7 @@ test('Handlungsbereich Land, Modus Zuwendung', () => {
     'Projektnr.',
     'Trägername',
     'Bundesland',
-    ...Monatsbericht.vergleichsfelder_zuwendungen,
+    ...Monatsbericht.vergleichsfelderZuwendungen,
   ]);
   expect(relevantColumns('Land')).not.toContain('Projekttitel');
 });
@@ -59,7 +59,7 @@ test('Andere Handlungsbereiche, Modus Zuwendung', () => {
     'Projektnr.',
     'Trägername',
     'Projekttitel',
-    ...Monatsbericht.vergleichsfelder_zuwendungen,
+    ...Monatsbericht.vergleichsfelderZuwendungen,
   ]);
   expect(relevantColumns('xyz', 'zuwendung')).not.toContain('Fördergebiet');
 });

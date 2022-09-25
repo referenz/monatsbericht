@@ -4,7 +4,7 @@ import Logger from './Logger';
 export type Projektliste = Map<string, Record<string, string | number | string[]>>;
 
 class Monatsbericht {
-  static vergleichsfelder_zuwendungen = ['Zuwendung 2020', 'Zuwendung 2021', 'Zuwendung 2022', 'Zuwendung 2023'];
+  static vergleichsfelderZuwendungen = ['Zuwendung 2020', 'Zuwendung 2021', 'Zuwendung 2022', 'Zuwendung 2023'];
 
   /**
    * Key = Name des Handlungsbereichs, Value = Array mit möglichen Namen der Tabellenblätter im Monatbericht
@@ -28,7 +28,7 @@ class Monatsbericht {
 
   private constructor(args: { buffer: [string, ArrayBuffer] }) {
     try {
-      this.projekte = this.get_projekte_aus_datei({ dateiname: args.buffer[0], buffer: args.buffer[1] });
+      this.projekte = this.getProjekteAusDatei({ dateiname: args.buffer[0], buffer: args.buffer[1] });
     } catch (e) {
       // xlsx wirft Instanzen von Error deshalb kein Type Check notwendig
       Logger.fatal(args.buffer[0] + ': ' + (e as Error).message);
@@ -49,7 +49,7 @@ class Monatsbericht {
    * @param workbook - Die von XLSX bereits eingelesene Excel-Datei
    * @returns zuordnungen - Eine Map, die als Keys die Blattnamen und als Value den jeweiligen Handlungsbereich enthält.
    */
-  private get_blattnamen_fuer_handlungsbereiche(workbook: WorkBook): Map<string, string> {
+  private getBlattnamenFuerHandlungsbereiche(workbook: WorkBook): Map<string, string> {
     const zuordnungen = new Map<string, string>();
 
     Monatsbericht.handlungsbereiche.forEach((blattnamen, handlungsbereich) => {
@@ -60,53 +60,54 @@ class Monatsbericht {
       }
     });
 
-    const keine_treffer = Array.from(Monatsbericht.handlungsbereiche.keys()).filter(
+    const keineTreffer = Array.from(Monatsbericht.handlungsbereiche.keys()).filter(
       handlungsbereich => !Array.from(zuordnungen.values()).includes(handlungsbereich)
     );
-    keine_treffer.forEach(handlungsbereich => {
+    keineTreffer.forEach(handlungsbereich => {
       Logger.error(`Kein passendes Tabellenblatt für Handlungsbereich "${handlungsbereich}" gefunden`);
     });
 
     return zuordnungen;
   }
 
-  private get_projekte_aus_blatt(blattname: string, workbook: WorkBook): Projektliste {
-    const json_liste: Record<string, string | number | string[]>[] = utils.sheet_to_json(workbook.Sheets[blattname]);
+  private getProjekteAusBlatt(blattname: string, workbook: WorkBook): Projektliste {
+    const jsonListe: Record<string, string | number | string[]>[] = utils.sheet_to_json(workbook.Sheets[blattname]);
     const projekte: Projektliste = new Map();
 
-    for (const zeile in json_liste)
-      if ('Nr' in json_liste[zeile]) {
-        delete json_liste[zeile]['Nr'];
-        projekte.set((json_liste[zeile]['Projektnr.'] as string).replace(/\s/, '').trim(), json_liste[zeile]);
-        json_liste[zeile]['Handlungsbereich'] = this.zuordnungen?.get(blattname) ?? '';
+    // eslint-disable-next-line @typescript-eslint/no-for-in-array
+    for (const zeile in jsonListe)
+      if ('Nr' in jsonListe[zeile]) {
+        delete jsonListe[zeile]['Nr'];
+        projekte.set((jsonListe[zeile]['Projektnr.'] as string).replace(/\s/, '').trim(), jsonListe[zeile]);
+        jsonListe[zeile]['Handlungsbereich'] = this.zuordnungen?.get(blattname) ?? '';
 
         // Eingelesene Daten aufräumen
-        json_liste[zeile]['Projektnr.'] = (json_liste[zeile]['Projektnr.'] as string).replace(/\s/, '').trim();
-        json_liste[zeile]['Fördergebiet'] = json_liste[zeile]['Fördergebiet '];
-        delete json_liste[zeile]['Fördergebiet '];
+        jsonListe[zeile]['Projektnr.'] = (jsonListe[zeile]['Projektnr.'] as string).replace(/\s/, '').trim();
+        jsonListe[zeile]['Fördergebiet'] = jsonListe[zeile]['Fördergebiet '];
+        delete jsonListe[zeile]['Fördergebiet '];
 
-        let gesuchte_spalte = Array.from(Object.keys(json_liste[zeile])).find(el =>
-          el.startsWith('Projektbezeichnung')
-        );
-        if (gesuchte_spalte) {
-          json_liste[zeile]['Projekttitel'] = json_liste[zeile][gesuchte_spalte];
-          delete json_liste[zeile][gesuchte_spalte];
+        let gesuchteSpalte = Array.from(Object.keys(jsonListe[zeile])).find(el => el.startsWith('Projektbezeichnung'));
+        if (gesuchteSpalte) {
+          jsonListe[zeile]['Projekttitel'] = jsonListe[zeile][gesuchteSpalte];
+          delete jsonListe[zeile][gesuchteSpalte];
         }
 
-        gesuchte_spalte = Array.from(Object.keys(json_liste[zeile])).find(el => el.startsWith('Projektlauf'));
-        if (gesuchte_spalte) {
-          const zeit = (json_liste[zeile][gesuchte_spalte] as string)?.match(/(\d\d\.\d\d\.\d\d\d\d)/gm);
-          if (!zeit) Logger.info(`Keine Projektlaufzeit bei Projekt ${json_liste[zeile]['Projektnr.']} angegeben`);
-          json_liste[zeile]['Projektlaufzeit'] = zeit ?? '';
-          delete json_liste[zeile][gesuchte_spalte];
+        gesuchteSpalte = Array.from(Object.keys(jsonListe[zeile])).find(el => el.startsWith('Projektlauf'));
+        if (gesuchteSpalte) {
+          const zeit = (jsonListe[zeile][gesuchteSpalte] as string)?.match(/(\d\d\.\d\d\.\d\d\d\d)/gm);
+          if (!zeit)
+            Logger.info(`Keine Projektlaufzeit bei Projekt ${jsonListe[zeile]['Projektnr.'] as string} angegeben`);
+          jsonListe[zeile]['Projektlaufzeit'] = zeit ?? '';
+          delete jsonListe[zeile][gesuchteSpalte];
         }
 
-        gesuchte_spalte = Array.from(Object.keys(json_liste[zeile])).find(el => el.startsWith('Bewilligungs'));
-        if (gesuchte_spalte) {
-          const zeit = (json_liste[zeile][gesuchte_spalte] as string)?.match(/(\d\d\.\d\d\.\d\d\d\d)/gm);
-          if (!zeit) Logger.info(`Kein Bewilligungszeitraum bei Projekt ${json_liste[zeile]['Projektnr.']} angegeben`);
-          json_liste[zeile]['Bewilligungszeit'] = zeit ?? '';
-          delete json_liste[zeile][gesuchte_spalte];
+        gesuchteSpalte = Array.from(Object.keys(jsonListe[zeile])).find(el => el.startsWith('Bewilligungs'));
+        if (gesuchteSpalte) {
+          const zeit = (jsonListe[zeile][gesuchteSpalte] as string)?.match(/(\d\d\.\d\d\.\d\d\d\d)/gm);
+          if (!zeit)
+            Logger.info(`Kein Bewilligungszeitraum bei Projekt ${jsonListe[zeile]['Projektnr.'] as string} angegeben`);
+          jsonListe[zeile]['Bewilligungszeit'] = zeit ?? '';
+          delete jsonListe[zeile][gesuchteSpalte];
         }
       }
 
@@ -114,14 +115,14 @@ class Monatsbericht {
     return projekte;
   }
 
-  private get_projekte_aus_datei(args: { dateiname: string; buffer: ArrayBuffer }): Projektliste {
+  private getProjekteAusDatei(args: { dateiname: string; buffer: ArrayBuffer }): Projektliste {
     const workbook = read(args.buffer);
-    this.zuordnungen = this.get_blattnamen_fuer_handlungsbereiche(workbook);
+    this.zuordnungen = this.getBlattnamenFuerHandlungsbereiche(workbook);
     const projekte: Projektliste = new Map();
     for (const blatt of this.zuordnungen.keys()) {
       if (!workbook.SheetNames.includes(blatt))
         Logger.error(`Tabellenblatt "${blatt}" nicht in Datei ${args.dateiname} enthalten`);
-      else this.get_projekte_aus_blatt(blatt, workbook).forEach((value, key) => projekte.set(key, value));
+      else this.getProjekteAusBlatt(blatt, workbook).forEach((value, key) => projekte.set(key, value));
     }
 
     if (projekte.size === 0) Logger.fatal(`Keine Projekte in Datei "${args.dateiname}" gefunden`);
@@ -130,20 +131,20 @@ class Monatsbericht {
     return projekte;
   }
 
-  public get_projekte(ohne_geendete = false) {
+  public getProjekte(ohneGeendete = false) {
     const projektliste: Projektliste = new Map(this.projekte);
-    if (ohne_geendete === true) this.get_geendete_projekte().forEach(projektnr => projektliste.delete(projektnr));
+    if (ohneGeendete === true) this.getGeendeteProjekte().forEach(projektnr => projektliste.delete(projektnr));
     return projektliste;
   }
 
-  public get_handlungsbereiche_mit_projekten(ohne_geendete = false) {
-    const projektliste = this.get_projekte(ohne_geendete);
+  public getHandlungsbereicheMitProjekten(ohneGeendete = false) {
+    const projektliste = this.getProjekte(ohneGeendete);
     const ordered: Map<string, string[]> = new Map();
 
     for (const projektnummer of projektliste.keys()) {
-      const liste = ordered?.get(this.get_projekt_data(projektnummer, 'Handlungsbereich') as string) ?? [];
+      const liste = ordered?.get(this.getProjektData(projektnummer, 'Handlungsbereich') as string) ?? [];
       liste.push(projektnummer);
-      ordered.set(this.get_projekt_data(projektnummer, 'Handlungsbereich') as string, liste);
+      ordered.set(this.getProjektData(projektnummer, 'Handlungsbereich') as string, liste);
     }
     return ordered;
   }
@@ -154,41 +155,38 @@ class Monatsbericht {
     }
     */
 
-  public get_projekt_data(projektnr: string, feld: string) {
+  public getProjektData(projektnr: string, feld: string) {
     return this.projekte.get(projektnr)?.[feld];
   }
 
-  private abweichung_projektdaten(alt: Monatsbericht, vergleich: 'Zuwendungen' | 'Bezeichnungen') {
-    const projekte_alt = alt.get_projekte();
-    const projekte_abweichende: Map<string, string[]> = new Map();
+  private abweichungProjektdaten(alt: Monatsbericht, vergleich: 'Zuwendungen' | 'Bezeichnungen') {
+    const projekteAlt = alt.getProjekte();
+    const projekteAbweichende: Map<string, string[]> = new Map();
 
     const vergleichsfelder =
-      vergleich === 'Zuwendungen' ? Monatsbericht.vergleichsfelder_zuwendungen : ['Trägername', 'Projekttitel'];
+      vergleich === 'Zuwendungen' ? Monatsbericht.vergleichsfelderZuwendungen : ['Trägername', 'Projekttitel'];
 
     this.projekte.forEach((projektdaten, projektnr) => {
-      const abweichende_felder: string[] = [];
+      const abweichendeFelder: string[] = [];
       vergleichsfelder.forEach(feld => {
-        if (projekte_alt.has(projektnr) && projektdaten[feld] !== projekte_alt.get(projektnr)?.[feld])
-          abweichende_felder.push(feld);
+        if (projekteAlt.has(projektnr) && projektdaten[feld] !== projekteAlt.get(projektnr)?.[feld])
+          abweichendeFelder.push(feld);
       });
 
-      if (abweichende_felder.length > 0) projekte_abweichende.set(projektnr, abweichende_felder);
+      if (abweichendeFelder.length > 0) projekteAbweichende.set(projektnr, abweichendeFelder);
     });
 
-    return projekte_abweichende;
+    return projekteAbweichende;
   }
 
-  public abweichung_projektdaten_nach_handlungsbereichen(
-    alt: Monatsbericht,
-    vergleich: 'Zuwendungen' | 'Bezeichnungen'
-  ) {
+  public abweichungProjektdatenNachHandlungsbereichen(alt: Monatsbericht, vergleich: 'Zuwendungen' | 'Bezeichnungen') {
     const ordered: Map<string, Map<string, string[]>> = new Map();
-    const projektliste = this.abweichung_projektdaten(alt, vergleich);
+    const projektliste = this.abweichungProjektdaten(alt, vergleich);
     projektliste.forEach((projekt, projektnr) => {
       const projekte: Map<string, string[]> =
-        ordered?.get(this.get_projekt_data(projektnr, 'Handlungsbereich') as string) ?? new Map();
+        ordered?.get(this.getProjektData(projektnr, 'Handlungsbereich') as string) ?? new Map<string, string[]>();
       projekte.set(projektnr, projekt);
-      ordered.set(this.get_projekt_data(projektnr, 'Handlungsbereich') as string, projekte);
+      ordered.set(this.getProjektData(projektnr, 'Handlungsbereich') as string, projekte);
     });
     return ordered;
   }
@@ -204,47 +202,47 @@ class Monatsbericht {
   private orderListe(projekte: string[], alt?: Monatsbericht) {
     const ordered: Map<string, string[]> = new Map();
     projekte.forEach(projekt => {
-      const handlungsbereich_aktuell =
+      const handlungsbereichAktuell =
         alt === undefined
-          ? (this.get_projekt_data(projekt, 'Handlungsbereich') as string)
-          : (alt.get_projekt_data(projekt, 'Handlungsbereich') as string);
+          ? (this.getProjektData(projekt, 'Handlungsbereich') as string)
+          : (alt.getProjektData(projekt, 'Handlungsbereich') as string);
 
-      const liste = ordered.get(handlungsbereich_aktuell) ?? [];
+      const liste = ordered.get(handlungsbereichAktuell) ?? [];
       liste.push(projekt);
-      ordered.set(handlungsbereich_aktuell, liste);
+      ordered.set(handlungsbereichAktuell, liste);
     });
 
     return ordered;
   }
 
-  private abweichung_projektzahl(alt: Monatsbericht) {
-    const projektliste_aktuell = Array.from(this.projekte.keys());
-    const projektliste_alt = Array.from(alt.get_projekte().keys());
+  private abweichungProjektzahl(alt: Monatsbericht) {
+    const projektlisteAktuell = Array.from(this.projekte.keys());
+    const projektlisteAlt = Array.from(alt.getProjekte().keys());
 
-    const neue_projekte = projektliste_aktuell.filter(projekt => !projektliste_alt.includes(projekt));
-    const alte_projekte = projektliste_alt.filter(projekt => !projektliste_aktuell.includes(projekt));
+    const neueProjekte = projektlisteAktuell.filter(projekt => !projektlisteAlt.includes(projekt));
+    const alteProjekte = projektlisteAlt.filter(projekt => !projektlisteAktuell.includes(projekt));
 
-    return [neue_projekte, alte_projekte];
+    return [neueProjekte, alteProjekte];
   }
 
-  public abweichung_projektzahl_nach_handlungsbereichen(alt: Monatsbericht) {
-    const abweichung = this.abweichung_projektzahl(alt);
+  public abweichungProjektzahlNachHandlungsbereichen(alt: Monatsbericht) {
+    const abweichung = this.abweichungProjektzahl(alt);
     return [this.orderListe(abweichung[0]), this.orderListe(abweichung[1], alt)];
   }
 
-  public get_geendete_projekte(zeitpunkt?: Date) {
-    const enddatum_auswertung = zeitpunkt ?? new Date();
-    const endende_projekte: string[] = [];
+  public getGeendeteProjekte(zeitpunkt?: Date) {
+    const enddatumAuswertung = zeitpunkt ?? new Date();
+    const endendeProjekte: string[] = [];
 
     this.projekte.forEach((projektdaten, projektnummer) => {
       if ((projektdaten?.['Projektlaufzeit'] as string[])?.[1] !== undefined) {
         const [day, month, year] = (projektdaten['Projektlaufzeit'] as string)[1].split('.');
-        const enddatum_projekt = new Date(`${year}-${month}-${day}`);
-        if (enddatum_projekt.valueOf() < enddatum_auswertung.valueOf()) endende_projekte.push(projektnummer);
+        const enddatumProjekt = new Date(`${year}-${month}-${day}`);
+        if (enddatumProjekt.valueOf() < enddatumAuswertung.valueOf()) endendeProjekte.push(projektnummer);
       }
     });
 
-    return endende_projekte;
+    return endendeProjekte;
   }
 
   /*

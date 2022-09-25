@@ -7,19 +7,19 @@ import VergleichProjektzahl from './VergleichProjektzahl';
 import VergleichSummen from './VergleichSummen';
 
 function Vergleich(props: {
-  datei_alt: MutableRefObject<FileBufferObj>;
+  dateiAlt: MutableRefObject<FileBufferObj>;
   monatsbericht: MutableRefObject<Monatsbericht>;
   className?: string;
 }) {
-  const monatsbericht_alt = Monatsbericht.fromArrayBuffer(props.datei_alt.current.name, props.datei_alt.current.buffer);
+  const monatsberichtAlt = Monatsbericht.fromArrayBuffer(props.dateiAlt.current.name, props.dateiAlt.current.buffer);
 
   return (
-    <Container className={props.className + ' vergleich'}>
-      <VergleichSummen monatsbericht_neu={props.monatsbericht.current} monatsbericht_alt={monatsbericht_alt} />
+    <Container className={(props.className as string) + ' vergleich'}>
+      <VergleichSummen monatsberichtNeu={props.monatsbericht.current} monatsberichtAlt={monatsberichtAlt} />
 
-      <VergleichBezeichnungen monatsbericht_neu={props.monatsbericht.current} monatsbericht_alt={monatsbericht_alt} />
+      <VergleichBezeichnungen monatsberichtNeu={props.monatsbericht.current} monatsberichtAlt={monatsberichtAlt} />
 
-      <VergleichProjektzahl monatsbericht_neu={props.monatsbericht.current} monatsbericht_alt={monatsbericht_alt} />
+      <VergleichProjektzahl monatsberichtNeu={props.monatsbericht.current} monatsberichtAlt={monatsberichtAlt} />
     </Container>
   );
 }

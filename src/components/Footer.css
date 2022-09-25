@@ -53,13 +53,12 @@ table.logTable tbody tr:hover {
     background-color: #fafafa !important;
 }
 
-table.logTable th,
-table.logTable td {
+table.logTable :is(th, td) {
     font-size: 0.85rem;
     padding: 12px 15px;
 }
 
-table.logTable tbody tr.error td {
+table.logTable tbody tr:is(.error, .fatal) td {
     color: red;
 }
 

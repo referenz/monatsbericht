@@ -1,14 +1,14 @@
 import Monatsbericht from '../service/Monatsbericht';
 import AnalyseProjektliste from './AnalyseProjektliste';
 
-function VergleichProjektzahl(props: { monatsbericht_neu: Monatsbericht; monatsbericht_alt: Monatsbericht }) {
-  const abweichungProjektzahl = props.monatsbericht_neu.abweichung_projektzahl_nach_handlungsbereichen(
-    props.monatsbericht_alt
+function VergleichProjektzahl(props: { monatsberichtNeu: Monatsbericht; monatsberichtAlt: Monatsbericht }) {
+  const abweichungProjektzahl = props.monatsberichtNeu.abweichungProjektzahlNachHandlungsbereichen(
+    props.monatsberichtAlt
   );
 
   const TabellenHinzugekommen = (
     <AnalyseProjektliste
-      monatsbericht={props.monatsbericht_neu}
+      monatsbericht={props.monatsberichtNeu}
       projekte={Array.from(abweichungProjektzahl[0])}
       expandedHeadline="Hinzugekommene Projekte"
     />
@@ -16,7 +16,7 @@ function VergleichProjektzahl(props: { monatsbericht_neu: Monatsbericht; monatsb
 
   const TabellenEntfernt = (
     <AnalyseProjektliste
-      monatsbericht={props.monatsbericht_alt}
+      monatsbericht={props.monatsberichtAlt}
       projekte={Array.from(abweichungProjektzahl[1])}
       expandedHeadline="Entfernte Projekte"
     />
