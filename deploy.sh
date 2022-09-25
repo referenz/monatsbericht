@@ -1,7 +1,7 @@
 #! /bin/sh
 
 BUILDDIR="build/"
-HTMLDIR="~/html"
+HTMLDIR="$HOME/html"
 
 if [[ -d $BUILDDIR && -d $HTMLDIR ]]; then
     rsync -av --delete $BUILDDIR $HTMLDIR/monatsberichte/
