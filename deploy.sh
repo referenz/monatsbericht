@@ -1,6 +1,5 @@
 #! /bin/sh
-
-BUILDDIR="build/"
+BUILDDIR="dist/"
 HTMLDIR="$HOME/html"
 
 if [[ -d $BUILDDIR && -d $HTMLDIR ]]; then

@@ -1,13 +1,20 @@
 body {
   padding-bottom: 1.5rem;
-}
-
-h2:not(:first-of-type) {
-  margin-top: 5rem;
+  font-family: -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;;
 }
 
 h3 {
-  margin-top: 25px;
+  margin-top: 50px;
 }
 
 main table {
@@ -37,11 +44,11 @@ main table caption span.expand {
   transition: font-size .4s ease-out;
 }
 
-main table caption.is-pinned span.expand {
+main table:not(.collapsed) caption.is-pinned span.expand {
   font-size: 100%;
 }
 
-main table thead  {
+main table thead {
   background-color: #009879;
   color: #ffffff;
   text-align: left;
@@ -50,25 +57,6 @@ main table thead  {
   position: sticky;
   top: 2rem;
   z-index: 2;
-
-}
-/* Firefox < 102 hat Probleme mit sticky caption */
-@supports (-moz-appearance:none) {
-  main table {
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-  }
-  main table caption {
-    position: static;
-  }
-
-  main table thead {
-    top: 0;
-  }
-
-  main table caption span.expand {
-    font-size: 100%;
-    transition: none;
-  }
 }
 
 main table caption span.caption-flexbox {
@@ -101,7 +89,8 @@ main table td {
   padding: 12px 15px;
 }
 
-main table tbody tr, table tfoot tr {
+main table tbody tr,
+table tfoot tr {
   border-bottom: 1px solid #dddddd;
 }
 
@@ -123,4 +112,23 @@ main table tfoot tr {
 
   background-color: #009879;
   color: #ffffff;
+}
+
+table.projektliste td[class^='zuwendung'] {
+  text-align: right;
+  white-space: nowrap;
+  transition: all .7s ease-in-out;
+}
+
+table.projektliste td[class^='zuwendung']:hover {
+  transform: scale(1.15);
+}
+
+table.projektliste td.changed span.wert-alt {
+  text-decoration: line-through;
+  color: red;
+}
+
+table.projektliste td.changed span.wert-neu {
+  background-color: yellow;
 }

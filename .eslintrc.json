@@ -1,40 +1,37 @@
 {
   "extends": [
-    "react-app", // Create React App base settings
-    "eslint:recommended", // recommended ESLint rules
-    "plugin:@typescript-eslint/recommended", // recommended rules from @typescript-eslint/eslint-plugin
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:prettier/recommended" // Enables eslint-plugin-prettier and eslint-config-prettier. This will display Prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
+    "plugin:@typescript-eslint/strict"
   ],
   "rules": {
-    "@typescript-eslint/unbound-method": [2, { "ignoreStatic": true }],
-    "@typescript-eslint/naming-convention": [1, {
-      "selector": "default",
-      "format": ["camelCase"],
-      "leadingUnderscore": "allow",
-      "trailingUnderscore": "allow"
-      },
-
-      {
-      "selector": "variable",
-      "format": ["camelCase", "UPPER_CASE", "PascalCase"],
-      "leadingUnderscore": "allow",
-      "trailingUnderscore": "allow"
-      },
-
-      {
-        "selector": "typeLike",
-        "format": ["PascalCase"]
-      },
-
-      {
-        "selector": "function",
-        "format": ["camelCase", "PascalCase"]
-      }
-    ],
-    "prettier/prettier": 1
+    "@typescript-eslint/restrict-template-expressions": 1,
+    "@typescript-eslint/naming-convention": 1
   },
+
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": ["./tsconfig.json"]
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": ["./tsconfig.json"],
+    "extraFileExtensions": [".svelte"]
+  },
+
+  "plugins": [
+    "svelte3",
+    "@typescript-eslint"
+  ],
+  "overrides": [
+    {
+      "files": ["*.svelte"],
+      "processor": "svelte3/svelte3"
+    }
+  ],
+  "settings": {
+    "svelte3/typescript": true
+  },
+  "env": {
+    "browser": true
   }
 }
