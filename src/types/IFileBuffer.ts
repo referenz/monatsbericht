@@ -1,6 +1,4 @@
-interface IFileBuffer {
+export interface IFileBuffer {
   name: string;
   buffer: ArrayBuffer;
 }
-
-export default IFileBuffer;

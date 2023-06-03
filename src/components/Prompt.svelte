@@ -1,6 +1,6 @@
 <script lang="ts">
   import Monatsbericht from "../lib/Monatsbericht";
-  import type IFileBuffer from "../types/IFileBuffer";
+  import type { IFileBuffer } from "../types/IFileBuffer";
   import { globalState } from "../utils/state";
 
   export let dateiAktuell: IFileBuffer;

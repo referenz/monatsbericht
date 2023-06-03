@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type IFileBuffer from "src/types/IFileBuffer";
+  import type { IFileBuffer } from "src/types/IFileBuffer";
   import { globalState } from "../utils/state";
   export let dateiAktuell: IFileBuffer;
   export let dateiAlt: IFileBuffer;
@@ -18,7 +18,7 @@
   function drop(e: DragEvent) {
     if (!e.dataTransfer) throw new Error("Drop Event gescheitert");
     (e.target as HTMLLabelElement).innerText = e.dataTransfer.files[0].name;
-    submitFile(e.dataTransfer.files[0]);
+    void submitFile(e.dataTransfer.files[0]);
   }
 
   function fsInput(e: Event) {
@@ -31,7 +31,7 @@
 
     // Ohne umkopieren scheint die strikte Typenprüfen hier nicht zu funktioniren
     const input = e.target as HTMLInputElement;
-    if (input.files?.[0]) submitFile(input.files[0]);
+    if (input.files?.[0]) void submitFile(input.files[0]);
     else throw new Error("keine Datei im Inputfeld hinterlegt");
   }
 
@@ -48,7 +48,7 @@
       dateiAlt = fileObject;
       globalState.gotoPage('COMPARE_TWO');
     }
-  };
+  }
 </script>
 
 <form class="dropform">

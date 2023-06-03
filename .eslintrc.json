@@ -3,11 +3,13 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "plugin:@typescript-eslint/strict"
+    "plugin:@typescript-eslint/strict",
+    "plugin:svelte/recommended",
+    "plugin:svelte/prettier"
   ],
   "rules": {
-    "@typescript-eslint/restrict-template-expressions": 1,
-    "@typescript-eslint/naming-convention": 1
+    "@typescript-eslint/restrict-template-expressions": "warn",
+    "@typescript-eslint/naming-convention": "warn"
   },
 
   "parser": "@typescript-eslint/parser",
@@ -17,21 +19,22 @@
     "project": ["./tsconfig.json"],
     "extraFileExtensions": [".svelte"]
   },
-
   "plugins": [
-    "svelte3",
     "@typescript-eslint"
   ],
   "overrides": [
     {
       "files": ["*.svelte"],
-      "processor": "svelte3/svelte3"
+      "parser": "svelte-eslint-parser",
+      // Parse the `<script>` in `.svelte` as TypeScript by adding the following configuration.
+      "parserOptions": {
+        "parser": "@typescript-eslint/parser"
+      }
     }
+
   ],
-  "settings": {
-    "svelte3/typescript": true
-  },
   "env": {
     "browser": true
-  }
+  },
+  "root": true
 }

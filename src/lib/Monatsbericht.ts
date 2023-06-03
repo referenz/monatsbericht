@@ -307,11 +307,6 @@ class Monatsbericht {
     return endendeProjekte;
   }
 
-  /*
-    public get_geendete_projekte_nach_handlungsbereichen(zeitpunkt?: Date) {
-        return this.orderListe(this.get_geendete_projekte(zeitpunkt));
-    }
-  */
 }
 
 export default Monatsbericht;

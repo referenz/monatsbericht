@@ -22,10 +22,10 @@
       <tr class="handlungsbereich">
         <td>{handlungsbereich[0]}</td>
         <td />
-        <td class="anzahl">{handlungsbereich[1]["anzahl"]}</td>
+        <td class="anzahl">{handlungsbereich[1].anzahl}</td>
       </tr>
       {#if handlungsbereich[1].hatThemenfelder}
-        {#each Array.from(handlungsbereich[1]?.themenfelder) as themenfeld}
+        {#each Array.from(handlungsbereich[1].themenfelder) as themenfeld}
           <tr>
             <td class="thema-davon" />
             <td>{themenfeld[0]}</td>

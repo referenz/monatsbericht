@@ -1,6 +1,6 @@
 <script lang="ts">
   import { globalState } from "./utils/state";
-  import type IFileBuffer from "./types/IFileBuffer";
+  import type { IFileBuffer } from "./types/IFileBuffer";
   import UploadForm from "./components/UploadForm.svelte";
   import Prompt from "./components/Prompt.svelte";
   import Footer from "./components/Footer.svelte";
