@@ -18,7 +18,7 @@
       columns.forEach(column => {
         const data = monatsbericht.getProjektData(projekt, column) as string | string[];
         let output = document.createElement("td");
-        if ((column === "Bewilligungszeit" || column === "Projektlaufzeit") && data !== undefined)
+        if ((column === "Bewilligungszeit" || column === "Projektlaufzeit") && data)
           output.textContent = `${data[0]} - ${data[1]}`;
         else output.textContent = data as string;
 
