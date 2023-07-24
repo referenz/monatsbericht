@@ -7,5 +7,6 @@ export default defineConfig({
   plugins: [svelte()],
   define: {
     APP_VERSION: JSON.stringify(process.env.npm_package_version),
+    BUILD_DATE: JSON.stringify(new Date().toISOString())
   },
 });

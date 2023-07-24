@@ -10,7 +10,7 @@ module.exports = {
     "@typescript-eslint/restrict-template-expressions": "warn",
     "@typescript-eslint/naming-convention": "warn"
   },
-  ignorePatterns: ['.eslintrc.cjs'],
+  ignorePatterns: ['.eslintrc.cjs', 'vite.config.ts'],
 
   parser: "@typescript-eslint/parser",
   parserOptions: {

@@ -7,7 +7,6 @@
   import Analyze from "./components/Analyze.svelte";
   import type Monatsbericht from "./lib/Monatsbericht";
   import Compare from "./components/Compare.svelte";
-  import { APP_VERSION } from './vite-env';
 
   import Logger from "./utils/logger";
   import { beforeUpdate } from "svelte";
@@ -27,6 +26,7 @@
 
 <svelte:head>
   <meta name="version" content={APP_VERSION} />
+  <meta name="build-date" content={BUILD_DATE} />
 </svelte:head>
 
 <Footer {logger} />
