@@ -30,7 +30,7 @@
         let output = document.createElement("td");
         if ((column === "Trägername" || column === "Projekttitel") && changed) {
           output.innerHTML =
-            "<span class='wert-alt'>" + monatsberichtAlt.getProjektData(projekt, column) +
+            "<span class='wert-alt'>" + (monatsberichtAlt.getProjektData(projekt, column) as string) +
             "<br /></span><span class='wert-neu'>" + data + "</span>";
         } else output.textContent = data;
 

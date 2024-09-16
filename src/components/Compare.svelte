@@ -5,14 +5,13 @@
   import CompareSums from "./CompareSums.svelte";
   import CompareTitle from "./CompareTitle.svelte";
 
+  export let monatsbericht: Monatsbericht;
+  export let dateiAlt: IFileBuffer;
 
-    export let monatsbericht: Monatsbericht;
-    export let dateiAlt: IFileBuffer;
-
-    const monatsberichtAlt = Monatsbericht.fromArrayBuffer(dateiAlt.name, dateiAlt.buffer);
+  const monatsberichtAlt = Monatsbericht.fromArrayBuffer(dateiAlt.name, dateiAlt.buffer);
 </script>
 
 <h2>Monatsberichte-Vergleich</h2>
-<CompareSums monatsbericht={monatsbericht} monatsberichtAlt={monatsberichtAlt} />
-<CompareTitle monatsbericht={monatsbericht} monatsberichtAlt={monatsberichtAlt} />
-<CompareNumbers monatsbericht={monatsbericht} monatsberichtAlt={monatsberichtAlt} />
+<CompareSums {monatsbericht} {monatsberichtAlt} />
+<CompareTitle {monatsbericht} {monatsberichtAlt} />
+<CompareNumbers {monatsbericht} {monatsberichtAlt} />

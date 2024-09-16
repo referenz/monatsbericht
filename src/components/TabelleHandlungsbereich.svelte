@@ -55,6 +55,7 @@
   <tbody>
     {#each rows as cells}
       <tr>
+        // eslint-disable-next-line svelte/no-at-html-tags
         {#each cells as cell}<td class={cell.class.toString()}>{@html cell.value.innerHTML}</td>{/each}
       </tr>
     {/each}
